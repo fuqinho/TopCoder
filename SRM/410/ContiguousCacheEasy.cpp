@@ -1,4 +1,4 @@
-// D2 250pt
+// Div2 Easy(250)
 // System Test Passed
 
 #include <iostream>

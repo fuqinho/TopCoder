@@ -26,15 +26,34 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const LL INF = 100000000000000000LL;
 
-class UnsortedSequence {
+class ImportantSequence {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
+  int getCount(vector <int> B, string operators) {
+    bool is_minus = false;
+    LL constant = 0;
+    LL max_val = INF;
+    LL min_val = 1;
+    for (int i = 0; i < B.size(); i++) {
+      if (operators[i] == '+') {
+        is_minus = !is_minus;
+        constant = B[i] - constant;
+      } else {
+        constant -= B[i];
+      }
+      
+      if (is_minus) {
+        max_val = min(max_val, constant - 1);
+      } else {
+        min_val = max(min_val, 1 - constant);
+      }
+    }
+    if (min_val > max_val) {
+      return 0;
     } else {
-      return vector<int>();
+      if (max_val == INF) return -1;
+      else return max_val - min_val + 1;
     }
   }
 };

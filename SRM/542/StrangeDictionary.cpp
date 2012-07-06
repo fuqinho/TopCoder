@@ -27,15 +27,27 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class StrangeDictionary {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  vector <double> getExpectedPositions(vector <string> words) {
+    int N = words.size();
+    int L = words[0].size();
+    vector<double> res(N);
+    REP(i, N) {
+      double p = 0.0;
+      REP(j, N) {
+        if (i == j) continue;
+        int bigger = 0;
+        int smaller = 0;
+        REP(k, L) {
+          if (words[j][k] > words[i][k]) bigger++;
+          if (words[j][k] < words[i][k]) smaller++;
+        }
+        p += (double)smaller / (bigger + smaller);
+      }
+      res[i] = p;
     }
+    return res;
   }
 };
 

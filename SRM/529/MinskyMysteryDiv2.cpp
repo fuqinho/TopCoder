@@ -27,15 +27,14 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class MinskyMysteryDiv2 {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  long long computeAnswer(long long N) {
+    if (N < 2) return -1;
+    for (long long i = 2; i * i <= N; i++) {
+      if (N % i == 0) return i + N / i;
     }
+    return N + 1;
   }
 };
 

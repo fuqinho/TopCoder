@@ -27,15 +27,10 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class DengklekTryingToSleep {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
-    }
+  int minDucks(vector <int> ducks) {
+    return (*max_element(ALL(ducks)) - *min_element(ALL(ducks)) + 1) - ducks.size();
   }
 };
 

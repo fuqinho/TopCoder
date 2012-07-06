@@ -26,16 +26,44 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int INF = 1000000000;
 
-class UnsortedSequence {
+class Cut {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int getMaximum(vector <int> eelLengths, int maxCuts) {
+    int N = eelLengths.size();
+    vector<PII> cands(N);
+    REP(i, N) {
+      if (eelLengths[i] % 10 == 0) {
+        cands[i] = PII(eelLengths[i]/10, i);
+      } else {
+        cands[i] = PII(INF, i);
+      }
     }
+    sort(cands.begin(), cands.end());
+
+    int res = 0;
+    REP(i, N) {
+      if (cands[i].first != INF) {
+        if (maxCuts >= cands[i].first - 1) {
+          maxCuts -= cands[i].first - 1;
+          res += cands[i].first;
+        } else {
+          res += maxCuts;
+          maxCuts = 0;
+        }
+      } else {
+        int length = eelLengths[cands[i].second];
+        if (maxCuts >= length / 10) {
+          maxCuts -= length / 10;
+          res += length / 10;
+        } else {
+          res += maxCuts;
+          maxCuts = 0;
+        }
+      }
+    }
+    return res;
   }
 };
 

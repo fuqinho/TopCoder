@@ -26,16 +26,39 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int MOD = 1000000007;
+const int MAX_N = 100;
+const int MAX_P = 100;
+int comb[MAX_N+1][MAX_N+1];
 
-class UnsortedSequence {
+class NoRepeatPlaylist {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int numPlaylists(int N, int M, int P) {
+    memset(comb, 0, sizeof(comb));
+    REP(i, N+1) comb[i][0] = 1;
+    REP(i, N) REP(j, N) if(i>=j) {
+      comb[i+1][j+1] = (comb[i][j+1] + comb[i][j]) % MOD;
     }
+
+    vector<LL> relax(N+1);
+    for(int i = 0; i <= N; i++) {
+      if (i < M) relax[i] = 0;
+      else {
+        relax[i] = 1;
+        for (int j = 0; j < P; j++) {
+          relax[i] *= (i - min(j, M));
+          relax[i] %= MOD;
+        }
+      }
+    }
+
+    LL res = 0;
+    for (int i = 0; i <= N; i++) {
+      res += (LL)comb[N][i] * ((i&1) ? -1 : 1) * relax[N-i];
+      res %= MOD;
+    }
+
+    return (res + MOD) % MOD;
   }
 };
 

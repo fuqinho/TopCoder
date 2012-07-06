@@ -26,16 +26,22 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const char VOWELS[] = {'a','e','i','o','u'};
 
-class UnsortedSequence {
+class KingXNewBaby {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  string isValid(string name) {
+    set<int> s;
+    int vcount = 0;
+    REP(i, name.size()) {
+      REP(j, 5) {
+        if (name[i] == VOWELS[j]) {
+          vcount ++;
+          s.insert(j);
+        }
+      }
     }
+    return name.size() == 8 && vcount==2 && s.size() == 1 ? "YES" : "NO";
   }
 };
 

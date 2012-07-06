@@ -26,16 +26,37 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const double INF = 1000000000.0;
 
-class UnsortedSequence {
+class EllysRivers {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  vector<int> width;
+  vector<int> speed;
+
+  double distance(int i, int p, int q) {
+    return sqrt((double)(q-p)*(q-p) + (double)width[i]*width[i]) / speed[i];
+  }
+  
+  double getMin(int length, int walk, vector <int> width, vector <int> speed) {
+    this->width = width;
+    this->speed = speed;
+    int N = width.size();
+    vector<vector<double> > dp(N+1, vector<double>(length+1, INF));
+    dp[N][length] = 0.0;
+    for (int i = N-1; i >= 0; i--) {
+      int q = length;
+      for (int p = length; p >= 0; p--) {
+        while (q > 0 && 
+               distance(i, p, q) + dp[i+1][q] > distance(i, p, q-1) + dp[i+1][q-1]) q--;
+        dp[i][p] = distance(i, p, q) + dp[i+1][q];
+      }
     }
+    
+    double min_time = INF;
+    for (int p = 0; p <= length; p++) {
+      min_time = min(min_time, dp[0][p] + double(p) / walk);
+    }
+    return min_time;
   }
 };
 

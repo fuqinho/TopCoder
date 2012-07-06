@@ -27,15 +27,45 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+const int PRIMES[] = {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47};
+const int PRIME_NUM = sizeof(PRIMES)/sizeof(PRIMES[0]);
+
+class RelativelyPrimeSubset {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int getMask(int n) {
+    int res = 0;
+    REP(i, PRIME_NUM) {
+      if (n % PRIMES[i] == 0) res |= (1<<i);
     }
+    return res;
+  }
+
+  int findSize(vector <int> S) {
+    int N = S.size();
+    vector<int> masks(N);
+    REP(i, N) masks[i] = getMask(S[i]);
+    
+    vector<vector<int> > dp(N+1, vector<int>(1<<PRIME_NUM, -1));
+    dp[0][0] = 0;
+    int res = 0;
+    REP(i, N) {
+      int mask = getMask(S[i]);
+      REP(j, 1<<PRIME_NUM) dp[i+1][j] = dp[i][j];
+      REP(j, 1<<PRIME_NUM) {
+        if (dp[i][j] != -1 && !(j & mask)) {
+          dp[i+1][j|mask] = max(dp[i+1][j|mask], dp[i][j] + 1);
+          res = max(res, dp[i+1][j|mask]);
+        }
+      }
+    }
+    /*
+    REP(i, N+1) {
+      REP(j, 1<<3) cerr << dp[i][j] << " ";
+      cerr << endl;
+    }
+    */
+    
+    return res;
   }
 };
 

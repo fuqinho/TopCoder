@@ -27,15 +27,42 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class EllysThreeRivers {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  vector<int> width;
+  vector<int> swim;
+  int walk;
+  int length;
+
+  double recurse(int idx, double rem) {
+    if (idx == 3) return rem/walk;
+
+    double res = 100000.0;
+    // ３分探索
+    double lb = 0.0, ub = rem;
+    for (int i = 0; i < 60; i++) {
+      double third = (ub - lb) / 3;
+      double mid1 = lb + third;
+      double mid2 = lb + third * 2;
+      double time1 = sqrt(width[idx]*width[idx]+mid1*mid1) / swim[idx] + recurse(idx+1, rem-mid1);
+      double time2 = sqrt(width[idx]*width[idx]+mid2*mid2) / swim[idx] + recurse(idx+1, rem-mid2);
+      res = min(res, min(time1, time2));
+      if (time1 < time2) {
+        ub = mid2;
+      } else {
+        lb = mid1;
+      }
     }
+    return res;
+  }
+  
+  double getMin(int length, int walk, vector <int> width, vector <int> swim) {
+    this->length = length;
+    this->walk = walk;
+    this->width = width;
+    this->swim = swim;
+
+    return recurse(0, length);
   }
 };
 

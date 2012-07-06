@@ -27,20 +27,23 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class EvenRoute {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  string isItPossible(vector <int> x, vector <int> y, int wantedParity) {
+    for (int i = 0; i < x.size(); i++) {
+      if ((abs(x[i]) + abs(y[i])) % 2 == wantedParity) return "CAN";
     }
+    return "CANNOT";
   }
 };
 
 
 
+
+
+// Powered by FileEdit
+// Powered by moj 4.16 [modified TZTester]
+// Powered by CodeProcessor
 
 
 // Powered by FileEdit

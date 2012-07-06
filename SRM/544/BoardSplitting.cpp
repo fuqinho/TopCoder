@@ -27,15 +27,23 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class BoardSplitting {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int minimumCuts(int desiredLength, int desiredCount, int actualLength) {
+    int rem = 0;
+    int cut = 0;
+    for (int i = 0; i < desiredCount; i++) {
+      while (rem < desiredLength) {
+        rem += actualLength;
+      }
+      if (rem == desiredLength) {
+        rem = 0;
+      } else {
+        cut++;
+        rem -= desiredLength;
+      }
     }
+    return cut;
   }
 };
 

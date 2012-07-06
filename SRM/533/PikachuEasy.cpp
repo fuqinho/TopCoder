@@ -27,15 +27,17 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class PikachuEasy {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  string check(string word) {
+    int i = 0;
+    while (i < word.size()) {
+      if (word.substr(i, 2) == "pi") i += 2;
+      else if (word.substr(i, 2) == "ka") i += 2;
+      else if (word.substr(i, 3) == "chu") i += 3;
+      else break;
     }
+    return i == word.size() ? "YES" : "NO";
   }
 };
 

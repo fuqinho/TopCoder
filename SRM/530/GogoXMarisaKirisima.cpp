@@ -27,15 +27,28 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class GogoXMarisaKirisima {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int solve(vector <string> choices) {
+    int N = choices.size();
+    vector<vector<bool> > cango(N, vector<bool>(N));
+    REP(i, N) REP(j, N) if (choices[i][j] == 'Y') cango[i][j] = true;
+    REP(k, N) REP(i, N) REP(j, N) if (cango[i][k] && cango[k][j]) cango[i][j] = true;
+
+    if (cango[0][N-1] == false) return 0;
+
+    vector<int> nice(N, false);
+    nice[0] = nice[N-1] = true;
+    for (int i = 1; i <= N-1; i++) {
+      if (cango[0][i] && cango[i][N-1]) nice[i] = true;
     }
+
+    int M = 0;
+    REP(i, N) REP(j, N) {
+      if (choices[i][j] == 'Y' && nice[i] && nice[j]) M++;
+    }
+
+    return M - (count(ALL(nice), true) - 2);
   }
 };
 

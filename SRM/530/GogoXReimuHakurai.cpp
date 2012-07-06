@@ -27,15 +27,34 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class GogoXReimuHakurai {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int solve(vector <string> choices) {
+    int N = choices.size();
+
+    vector<vector<bool> > reachable(N, vector<bool>(N));
+    REP(i, N) REP(j, N) {
+      if (choices[i][j] == 'Y') reachable[i][j] = true;
     }
+    REP(k, N) REP(i, N) REP(j, N) {
+      if (reachable[i][k] && reachable[k][j]) reachable[i][j] = true;
+    }
+    if (reachable[0][N-1] == false) return 0;
+
+    vector<bool> nice(N);
+    nice[0] = nice[N-1] = true;
+    for (int i = 1; i < N-1; i++) {
+      if (reachable[0][i] && reachable[i][N-1]) nice[i] = true;
+    }
+
+    int nice_edges = 0;
+    REP(i, N) REP(j, N) {
+      if (choices[i][j] == 'Y' && nice[i] && nice[j]) nice_edges++;
+    }
+    int nice_nodes = 0;
+    REP(i, N) if (nice[i]) nice_nodes++;
+
+    return nice_edges - (nice_nodes - 2);
   }
 };
 

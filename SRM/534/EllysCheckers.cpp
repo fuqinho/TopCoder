@@ -26,16 +26,35 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+int memo[1<<20];
 
-class UnsortedSequence {
+class EllysCheckers {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int dfs(int s) {
+    s &= ~1;
+    if (memo[s] != -1) return memo[s];
+
+    int res = 0;
+    for (int i = 0; i < 20; i++) {
+      if (s & (1<<i)) {
+        if (i > 0 && !(s & (1<<(i-1)))) {
+          if (dfs((s & ~(1<<i)) | (1<<(i-1))) == 0) res = 1;
+        }
+        if (i > 2 && !(s & (1<<(i-3))) && (s & (1<<(i-1))) && (s & (1<<(i-2)))) {
+          if (dfs((s & ~(1<<i)) | (1<<(i-3))) == 0) res = 1;
+        }
+      }
     }
+    return memo[s] = res;
+  }
+
+  string getWinner(string board) {
+    memset(memo, -1, sizeof(memo));
+    int s = 0;
+    for (int i = 0; i < board.size(); i++) {
+      if (board[i] == 'o') s |= (1 << (board.size()-1-i));
+    }
+    return dfs(s) == 1 ? "YES" : "NO";
   }
 };
 

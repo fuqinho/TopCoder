@@ -27,15 +27,16 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class EllysTSP {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int getMax(string places) {
+    int nv = 0, nc = 0;
+    REP(i, places.size()) {
+      if (places[i] == 'C') nc++;
+      else nv++;
     }
+    if (nc == nv) return nc + nv;
+    else return min(nc, nv) * 2 + 1;
   }
 };
 

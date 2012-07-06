@@ -27,15 +27,18 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class RollingDiceDivOne {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  long long mostLikely(vector <int> dice) {
+    sort(dice.rbegin(), dice.rend());
+    LL top_width = dice[0];
+    LL total_width = dice[0];
+    for (int i = 1; i < dice.size(); i++) {
+      top_width -= dice[i]-1;
+      total_width += dice[i]-1;
     }
+    if (top_width <= 0) top_width = total_width % 2 ? 1 : 2;
+    return dice.size() + (total_width - top_width) / 2;
   }
 };
 

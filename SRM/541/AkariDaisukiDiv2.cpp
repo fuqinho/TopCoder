@@ -27,15 +27,21 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class AkariDaisukiDiv2 {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int countTuples(string S) {
+    int res = 0;
+    int N = S.size();
+    for (int i = 1; i < N; i++) {
+      for (int j = i+1; j < N; j++) {
+        for (int k = j+1; k < N; k++) {
+          for (int l = k+1; l < N; l++) {
+            if (S.substr(i, j-i) == S.substr(k, l-k)) res++;
+          }
+        }
+      }
     }
+    return res;
   }
 };
 

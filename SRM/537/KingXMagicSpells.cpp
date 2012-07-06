@@ -26,16 +26,36 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int MAX_R = 50;
+const int MAX_K = 50;
+double dp[MAX_K+1][MAX_R][32];
 
-class UnsortedSequence {
+class KingXMagicSpells {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  double expectedNumber(vector <int> ducks, vector <int> spellOne, vector <int> spellTwo, int K) {
+    memset(dp, 0, sizeof(dp));
+    int N = ducks.size();
+    REP(i, N) REP(j, 32) {
+      dp[0][i][j] = (ducks[i] & (1<<j)) ? 1.0 : 0.0;
     }
+
+    REP(k, K) {
+      REP(i, N) REP(j, 32) {
+        // pattern: xor
+        if (spellOne[i] & (1<<j)) {
+          dp[k+1][i][j] += (1.0 - dp[k][i][j]) * 0.5;
+        } else {
+          dp[k+1][i][j] += dp[k][i][j] * 0.5;
+        }
+        
+        // pattern: move
+        dp[k+1][spellTwo[i]][j] += dp[k][i][j] * 0.5;
+      }
+    }
+
+    double res = 0.0;
+    REP(i, 32) res += dp[K][0][i] * (1<<i);
+    return res;
   }
 };
 

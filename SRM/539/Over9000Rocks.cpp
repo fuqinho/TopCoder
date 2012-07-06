@@ -27,15 +27,38 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class Over9000Rocks {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int countPossibilities(vector <int> lowerBound, vector <int> upperBound) {
+    int N = lowerBound.size();
+    map<int, int> m;
+    for (int i = 1; i < (1<<N); i++) {
+      int lb = 0, ub = 0;
+      REP(j, N) {
+        if (i & (1<<j)) {
+          lb += lowerBound[j];
+          ub += upperBound[j];
+        }
+        m[lb]++;
+        m[ub+1]--;
+      }
     }
+
+    int accum = 0;
+    int res = 0;
+    int start = 0;
+    for (map<int, int>::iterator it = m.begin(); it != m.end(); it++) {
+      int next_accum = accum + it->second;
+      if (accum == 0 && next_accum > 0) {
+        start = it->first;
+      }
+      if (accum > 0 && next_accum == 0) {
+        res += max(0, it->first - max(9001, start));
+      }
+      accum = next_accum;
+    }
+
+    return res;
   }
 };
 

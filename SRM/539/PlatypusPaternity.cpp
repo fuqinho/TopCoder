@@ -27,15 +27,33 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class PlatypusPaternity {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int maxFamily(vector <string> femaleCompatibility, vector <string> maleCompatibility, vector <string> siblingGroups) {
+    int res = 0;
+    int N = siblingGroups[0].size();
+    REP(i, femaleCompatibility.size()) {
+      REP(j, maleCompatibility.size()) {
+        REP(k, siblingGroups.size()) {
+          bool isOK = true;
+          int cnt = 0;
+          REP(l, N) {
+            if (siblingGroups[k][l] == 'Y') { 
+              if (femaleCompatibility[i][l] == 'Y' && maleCompatibility[j][l] == 'Y') {
+                cnt++;
+              } else {
+                isOK = false;
+                break;
+              }
+            }
+          }
+          if (isOK) {
+            res = max(res, cnt + 2);
+          }
+        }
+      }
     }
+    return res;
   }
 };
 

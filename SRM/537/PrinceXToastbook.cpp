@@ -27,15 +27,32 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class PrinceXToastbook {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  double eat(vector <int> prerequisite) {
+    double res = 0.0;
+    REP(i, prerequisite.size()) {
+      int count = 0;
+      int cur = i;
+      while (cur != -1) {
+        cur = prerequisite[cur];
+        count++;
+        // check loop (this book can not be understood)
+        if (count > prerequisite.size()) {
+          count = -1;
+          break;
+        }
+      }
+      if (count != -1) {
+        double p = 1.0;
+        while (count > 0) {
+          p /= count;
+          count--;
+        }
+        res += p;
+      }
     }
+    return res;
   }
 };
 

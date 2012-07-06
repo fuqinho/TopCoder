@@ -26,16 +26,39 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int MAX_N = 30;
+const int MAX_M = 30;
+const int MAX_K = 8;
+const int MOD = 1000000007;
 
-class UnsortedSequence {
+int dp[MAX_N+1][MAX_M+1][MAX_K+1][1<<(MAX_K+1)];
+
+class DengklekBuildingRoads {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+
+  int numWays(int N, int M, int K) {
+    memset(dp, 0, sizeof(dp));
+    dp[N][M][0][0] = 1;
+
+    for (int i = N-1; i >= 0; i--) {
+      for (int j = M; j >= 0; j--) {
+        for (int mask = 0; mask < (1 << (K+1)); mask++) {
+          if (!(mask & (1 << K))) {
+            dp[i][j][K][mask] = dp[i+1][j][0][mask<<1];
+          }
+        }
+        for (int k = K-1; k >= 0; k--) {
+          for (int mask = 0; mask < (1 << (K+1)); mask++) {
+            dp[i][j][k][mask] = dp[i][j][k+1][mask];
+            if (j+1 <= M && i-(k+1) >= 0) {
+              dp[i][j][k][mask] += dp[i][j+1][k][mask^(1<<0)^(1<<(k+1))];
+              dp[i][j][k][mask] %= MOD;
+            }
+          }
+        }
+      }
     }
+    return dp[0][0][0][0];
   }
 };
 

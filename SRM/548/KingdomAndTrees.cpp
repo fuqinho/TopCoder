@@ -27,15 +27,31 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class KingdomAndTrees {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  bool C(vector<int> heights, int level) {
+    int minval = max(1, heights[0] - level);
+    for (int i = 1; i < heights.size(); i++) {
+      if (heights[i] + level > minval) {
+        minval = max(minval+1, heights[i] - level);
+      } else {
+        return false;
+      }
     }
+    return true;
+  }
+
+  int minLevel(vector <int> heights) {
+    int lb = -1, ub = 2000000000;
+    while (ub - lb > 1) {
+      int mid = (lb + ub) / 2;
+      if (C(heights, mid)) {
+        ub = mid;
+      } else {
+        lb = mid;
+      }
+    }
+    return ub;
   }
 };
 

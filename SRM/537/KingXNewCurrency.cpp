@@ -27,15 +27,35 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class KingXNewCurrency {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int gcd(int a, int b) {
+    if (a < b) swap(a, b);
+    return b == 0 ? a : gcd(b, a%b);
+  }
+
+  int howMany(int A, int B, int X) {
+    if (gcd(A, B) % X == 0) return -1;
+
+    int res = 0;
+    for (int Y = 1; Y <= max(A, B); Y++) {
+      bool canMakeA = false, canMakeB = false;
+      for (int i = 0; X*i <= A; i++) {
+        if ((A - X*i) % Y == 0) {
+          canMakeA = true;
+          break;
+        }
+      }
+      for (int i = 0; X*i <= B; i++) {
+        if ((B - X*i) % Y == 0) {
+          canMakeB = true;
+          break;
+        }
+      }
+      if (canMakeA && canMakeB) res++;
     }
+
+    return res;
   }
 };
 

@@ -26,16 +26,21 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int MOD = 1000000007;
 
-class UnsortedSequence {
+class PatrolRoute {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int countRoutes(int X, int Y, int minT, int maxT) {
+    LL res = 0;
+    for (int w = 2; w < X; w++) {
+      for (int h = 2; h < Y; h++) {
+        if (w * 2 + h * 2 >= minT && w * 2 + h * 2 <= maxT) {
+          res += (LL)(X-w) * (Y-h) * (w-1) * (h-1) * 6;
+          res %= MOD;
+        }
+      }
     }
+    return res;
   }
 };
 

@@ -27,15 +27,27 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class MinCostPalindrome {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int getMinimum(string s, int oCost, int xCost) {
+    int res = 0;
+    for (int i = 0; i < s.size()/2; i++) {
+      if (s[i] != '?' && s[s.size()-1-i] != '?') {
+        if (s[i] != s[s.size()-1-i]) return -1;
+      }
+      else if (s[i] == '?' && s[s.size()-1-i] == '?') {
+        res += min(oCost, xCost) * 2;
+      }
+      else if (s[i] == '?') {
+        if (s[s.size()-1-i] == 'o') res += oCost;
+        else res += xCost;
+      }
+      else {
+        if (s[i] == 'o') res += oCost;
+        else res += xCost;
+      }
     }
+    return res;
   }
 };
 

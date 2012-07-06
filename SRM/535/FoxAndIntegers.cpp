@@ -27,12 +27,27 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class FoxAndIntegers {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
+  vector <int> get(int AminusB, int BminusC, int AplusB, int BplusC) {
+    int A, B, C;
+    if ((AminusB + AplusB) % 2 == 0) {
+      A = (AminusB + AplusB) / 2;
+    } else {
+      return vector<int>();
+    }
+    if ((AplusB - AminusB) % 2 == 0) {
+      B = (AplusB - AminusB) / 2;
+    } else {
+      return vector<int>();
+    }
+    C = B - BminusC;
+    if (B + C == BplusC) {
+      vector<int> res;
+      res.push_back(A);
+      res.push_back(B);
+      res.push_back(C);
+      return res;
     } else {
       return vector<int>();
     }

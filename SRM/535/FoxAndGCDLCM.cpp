@@ -27,15 +27,26 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class FoxAndGCDLCM {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  LL gcd(LL n, LL m) {
+    if (n < m) swap(n, m);
+    return m == 0 ? n : gcd(m, n%m);
+  }
+
+  long long get(long long G, long long L) {
+    if (L % G) return -1;
+    LL ab = L / G;
+    LL ans = 1000000000000000LL;
+    for (LL a = 1; a*a <= ab; a++) {
+      if (ab % a == 0) {
+        LL b = ab / a;
+        if (gcd(a, b) == 1) {
+          ans = min(ans, G*(a+b));
+        }
+      }
     }
+    return ans;
   }
 };
 

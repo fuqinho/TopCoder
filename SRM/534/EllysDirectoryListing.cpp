@@ -27,15 +27,22 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class EllysDirectoryListing {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  vector <string> getFiles(vector <string> files) {
+    REP(i, files.size()-2) {
+      if (files[i] == "." || files[i] == "..") {
+        swap(files[i], files[files.size()-1]);
+        break;
+      }
     }
+    REP(i, files.size()-2) {
+      if (files[i] == "." || files[i] == "..") {
+        swap(files[i], files[files.size()-2]);
+        break;
+      }
+    }
+    return files;
   }
 };
 

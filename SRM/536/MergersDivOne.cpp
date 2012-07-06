@@ -26,16 +26,22 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
-
-class UnsortedSequence {
+class MergersDivOne {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  double findMaximum(vector <int> r) {
+    int N = r.size();
+    sort(ALL(r));
+    vector<double> dp(N);
+
+    for (int i = 2; i <= N; i++) {
+      dp[i-1] = accumulate(r.begin(), r.begin()+i, 0.0) / i;
     }
+    for (int i = 1; i < N; i++) {
+      for (int j = i+2; j <= N; j++) {
+        dp[j-1] = max(dp[j-1], (dp[i] + accumulate(r.begin()+i+1, r.begin()+j, 0.0)) / (j-i));
+      }
+    }
+    return dp[N-1];
   }
 };
 

@@ -26,16 +26,23 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int MAX_HEIGHT = 100;
+const int MAX_N = 50;
+double dp[MAX_N+1][MAX_HEIGHT];
 
-class UnsortedSequence {
+class PillarsDivTwo {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  double maximalLength(vector <int> height, int w) {
+    memset(dp, 0, sizeof(dp));
+    int N = height.size();
+    for (int i = 1; i < N; i++) {
+      for (int j = 0; j < height[i]; j++) {
+        for (int k = 0; k < height[i-1]; k++) {
+          dp[i][j] = max(dp[i][j], dp[i-1][k] + sqrt((double)w*w + (double)(j-k)*(j-k)));
+        }
+      }
     }
+    return *max_element(dp[N-1], dp[N-1] + MAX_HEIGHT);
   }
 };
 

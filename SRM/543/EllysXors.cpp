@@ -27,15 +27,20 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class EllysXors {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  long long getXor(long long N) {
+    LL res = 0;
+    for (int i = 0; i < 40; i++) {
+      LL unit = (N+1) / ((1LL << i) * 2);
+      LL rem = (N+1) % ((1LL << i) * 2);
+      LL bits = unit * (1LL << i) + max(0LL, rem - (1LL << i));
+      if (bits & 1) res |= (1LL << i);
     }
+    return res;
+  }
+  long long getXor(long long L, long long R) {
+    return getXor(R) ^ getXor(L-1);
   }
 };
 

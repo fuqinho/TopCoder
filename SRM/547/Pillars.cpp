@@ -27,15 +27,21 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class Pillars {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  double getExpectedLength(int w, int x, int y) {
+    vector<double> lens(max(x,y));
+    vector<int> nums(max(x,y));
+    REP(i, lens.size()) {
+      lens[i] = sqrt((double)w * w + (double)i * i);
     }
+    REP(i, nums.size()) {
+      if (i == 0) nums[i] = min(x, y);
+      else nums[i] = min(x, max(0, y-i)) + min(max(0, x-i), y);
+    }
+    double ans = 0.0;
+    REP(i, lens.size()) ans += lens[i] * nums[i];
+    return ans / accumulate(nums.begin(), nums.end(), 0LL);
   }
 };
 

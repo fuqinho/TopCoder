@@ -27,15 +27,30 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class LeftOrRight {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
+  int maxDistance(string program) {
+    int N = program.size();
+    int pos = 0;
+    int res = 0;
+    REP(i, N) {
+      if (program[i] == 'L' || program[i] == '?') {
+        pos--;
+      } else {
+        pos++;
+      }
+      res = max(res, abs(pos));
     }
+    pos = 0;
+    REP(i, N) {
+      if (program[i] == 'L') {
+        pos--;
+      } else {
+        pos++;
+      }
+      res = max(res, abs(pos));
+    }
+    return res;
   }
 };
 

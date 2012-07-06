@@ -27,15 +27,14 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class GogoXBallsAndBinsEasy {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
-    }
+  int solve(vector <int> T) {
+    vector<int> S = T;
+    sort(S.rbegin(), S.rend());
+    int sum = 0;
+    REP(i, T.size()) sum += abs(T[i] - S[i]);
+    return sum / 2;
   }
 };
 

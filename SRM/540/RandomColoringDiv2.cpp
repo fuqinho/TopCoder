@@ -27,15 +27,19 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class UnsortedSequence {
+class RandomColoringDiv2 {
 public:
-  vector <int> getUnsorted(vector <int> s) {
-    sort(s.begin(), s.end());
-    if (next_permutation(s.begin(), s.end())) {
-      return s;
-    } else {
-      return vector<int>();
-    }
+  int patterns(int maxR, int maxG, int maxB, int startR, int startG, int startB, int d) {
+    if (d < 0) return 0;
+    int r = min(maxR-1, startR + d) - max(0, startR - d) + 1;
+    int g = min(maxG-1, startG + d) - max(0, startG - d) + 1;
+    int b = min(maxB-1, startB + d) - max(0, startB - d) + 1;
+    return r * g * b;
+  }
+
+  int getCount(int maxR, int maxG, int maxB, int startR, int startG, int startB, int d1, int d2) {
+    return patterns(maxR, maxG, maxB, startR, startG, startB, d2) -
+           patterns(maxR, maxG, maxB, startR, startG, startB, d1-1);
   }
 };
 

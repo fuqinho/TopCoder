@@ -26,15 +26,98 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int INF = 1000000000;
+const int MAX_N = 474747;
+bool is_prime[MAX_N+1];
+int dp[MAX_N+1][2];
 
-class SRMRoomAssignmentPhase {
+class PrimeCompositeGame {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+
+  int getMinimum(set<PII>& theSet, int bound) {
+    while (!theSet.empty()) {
+      set<PII>::iterator it = theSet.begin();
+      if (it->second < bound)
+        theSet.erase(it);
+      else
+        return it->first;
     }
-    return higher / K;
+    return 0;
+  }
+
+  int getMaximum(set<PII>& theSet, int bound) {
+    while (!theSet.empty()) {
+      set<PII>::reverse_iterator it = theSet.rbegin();
+      if (it->second < bound) 
+        theSet.erase(theSet.find(*it));
+      else 
+        return it->first;
+    }
+    return 0;
+  }
+    
+  int theOutcome(int N, int K) {
+    // prepare prime
+    REP(i, MAX_N+1) is_prime[i] = true;
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i <= N; i++) {
+      if (is_prime[i]) {
+        for (int j = i*2; j <= N; j+=i) is_prime[j] = false;
+      }
+    }
+
+    memset(dp, 0, sizeof(dp));
+    set<PII> primePositive;
+    set<PII> primeNegative;
+    set<PII> compoPositive;
+    set<PII> compoNegative;
+
+    for (int i = 1; i <= N; i++) {
+      for (int p = 0; p <= 1; p++) {
+        int best = 0;
+        // find minimum winning pos
+        if (p == 0) {
+          best = getMinimum(primePositive, i-K);
+          if (best == 0) best = getMinimum(primeNegative, i-K);
+        }
+        else {
+          best = getMaximum(compoNegative, i-K);
+          if (best == 0) best = getMaximum(compoPositive, i-K);
+        }
+
+        // update dp table
+        if (best == 0) {
+          if (p == 0) dp[i][p] = -1;
+          else dp[i][p] = 1;
+        }
+        else {
+          if (best > 0) dp[i][p] = best + 1;
+          else dp[i][p] = best - 1;
+        }
+
+        if (i != 1) {
+          if (dp[i][p] > 0) {
+            if (is_prime[i]) {
+              if (p == 1) primePositive.insert(PII(dp[i][p], i));
+            }
+            else {
+              if (p == 0) compoPositive.insert(PII(dp[i][p], i));
+            }
+          }
+          else {
+            if (is_prime[i]) {
+              if (p == 1) primeNegative.insert(PII(dp[i][p], i));
+            }
+            else {
+              if (p == 0) compoNegative.insert(PII(dp[i][p], i));
+            }
+          }
+        }
+      }
+    }
+
+    if (dp[N][0] > 0) return dp[N][0]-1;
+    else return dp[N][0]+1;
   }
 };
 
@@ -111,87 +194,78 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
+			int N                     = 3;
 			int K                     = 2;
 			int expected__            = 1;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}
+		case 1: {
+			int N                     = 58;
+			int K                     = 1;
+			int expected__            = 0;
+
+			clock_t start__           = clock();
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}
+		case 2: {
+			int N                     = 30;
+			int K                     = 3;
+			int expected__            = -2;
+
+			clock_t start__           = clock();
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
+			int N                     = 6;
 			int K                     = 3;
 			int expected__            = 1;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
+			int N                     = 526;
+			int K                     = 58;
+			int expected__            = 19;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
-/*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+    case 5: {
+			int N                     = 1;
+			int K                     = 1;
+			int expected__            = 0;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
 			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
+		}
+    case 6: {
+			int N                     = 304124;
+			int K                     = 288946;
+			int expected__            = 3;
+
+			clock_t start__           = clock();
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}
 /*      case 7: {
-			int ratings[]             = ;
+			int N                     = ;
 			int K                     = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = PrimeCompositeGame().theOutcome(N, K);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

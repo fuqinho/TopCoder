@@ -1,36 +1,53 @@
 #include <iostream>
-#include <string>
+#include <sstream>
 #include <vector>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
 #include <algorithm>
+#include <numeric>
+#include <cstdio>
 #include <cmath>
-#include <ctime>
+#include <cstring>
 using namespace std;
 
-#define FOR(i,a,b) for(int i=(a);i<(b);++i)
-#define REP(i,n)  FOR(i,0,n)
-#define dump(x)  cerr << #x << " = " << (x) << endl;
+typedef vector<int> VI;
+typedef vector<VI> VVI;
+typedef vector<string> VS;
+typedef pair<int, int> PII;
+typedef long long LL;
+#define ALL(a)  (a).begin(),(a).end()
+#define REP(i,n) for(int i=0;i<(n);++i)
+const double EPS = 1e-10;
+const double PI  = acos(-1.0);
+#define dump(x) cerr << "  (L" << __LINE__ << ") " << #x << " = " << (x) << endl;
+#define dumpv(x) cerr << "  (L" << __LINE__ << ") " << #x << " = "; REP(q,(x).size()) cerr << (x)[q] << " "; cerr << endl;
+template<typename T1, typename T2>
+ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
+
 
 class MissingParentheses {
 public:
-    int countCorrections(string par) {
-        int stack = 0;
-        int parens = 0;
-        for (int i = 0; i < par.size(); i++) {
-            if (par[i] == '(') {
-                stack++;
-            }
-            if (par[i] == ')') {
-                stack--;
-                if (stack == -1) {
-                    stack++;
-                    parens++;
-                }
-            }
+  int countCorrections(string par) {
+    int res = 0;
+    int level = 0;
+    for (int i = 0; i < par.size(); i++) {
+      if (par[i] == '(') {
+        level++;
+      } else {
+        level--;
+        if (level < 0) {
+          level ++;
+          res++;
         }
-        parens += stack;
-        return parens;
+      }
     }
+    return res + level;
+  }
 };
+
+
 
 // BEGIN CUT HERE
 namespace moj_harness {

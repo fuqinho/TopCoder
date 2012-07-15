@@ -27,14 +27,41 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class SRMRoomAssignmentPhase {
+class BinaryCards {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+
+  int getDigits(LL n) {
+    int res = 0;
+    while (n) {
+      res++;
+      n >>= 1;
     }
-    return higher / K;
+    return res;
+  }
+
+  long long largestNumber(long long A, long long B) {
+    if (A == B) return A;
+    
+    int digits = getDigits(B);
+    for (int i = 0; i < digits-1; i++) {
+      if (B & (1LL<<i)) {
+        if (B - (1LL<<i) > A) {
+          B -= (1LL<<i);
+        } else {
+          break;
+        }
+      }
+    }
+  
+    for (int i = 0; i < digits; i++) {
+      if (!(B & (1LL<<i))) {
+        B += (1LL<<i);
+      } else {
+        break;
+      }
+    }
+
+    return B;
   }
 };
 
@@ -71,7 +98,7 @@ namespace moj_harness {
 		}
 	}
 	
-	int verify_case(int casenum, const int &expected, const int &received, clock_t elapsed) { 
+	int verify_case(int casenum, const long long &expected, const long long &received, clock_t elapsed) { 
 		cerr << "Example " << casenum << "... "; 
 		
 		string verdict;
@@ -111,87 +138,87 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			long long A               = 6;
+			long long B               = 6;
+			long long expected__      = 6;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			long long A               = 6;
+			long long B               = 7;
+			long long expected__      = 7;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			long long A               = 6;
+			long long B               = 8;
+			long long expected__      = 15;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			long long A               = 1;
+			long long B               = 11;
+			long long expected__      = 15;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
+			long long A               = 35;
+			long long B               = 38;
+			long long expected__      = 39;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
+			long long A               = 1125899906842630LL;
+			long long B               = 1125899906842632LL;
+			long long expected__      = 1125899906842639LL;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
-/*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+    case 6: {
+			long long A               = 337007621073450791LL;
+			long long B               = 337259621176923563LL;
+			long long expected__      = 337769972052787199LL;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
+		}
 /*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			long long A               = ;
+			long long B               = ;
+			long long expected__      = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			long long A               = ;
+			long long B               = ;
+			long long expected__      = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = BinaryCards().largestNumber(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

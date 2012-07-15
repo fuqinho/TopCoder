@@ -26,15 +26,32 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+int max_index(string s, int start) {
+  char max_c = 0;
+  int res = s.size();
 
-class SRMRoomAssignmentPhase {
-public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+  for (int i = start; i < s.size(); i++) {
+    if (s[i] > max_c) {
+      max_c = s[i];
+      res = i;
     }
-    return higher / K;
+  }
+  return res;
+}
+
+class LargestSubsequence {
+public:
+  string getLargest(string s) {
+    int cur = 0;
+    string res = "";
+    while (cur < s.size()) {
+      cur = max_index(s, cur);
+      if (cur < s.size()) {
+        res += s[cur];
+        cur++;
+      }
+    }
+    return res;
   }
 };
 
@@ -71,7 +88,7 @@ namespace moj_harness {
 		}
 	}
 	
-	int verify_case(int casenum, const int &expected, const int &received, clock_t elapsed) { 
+	int verify_case(int casenum, const string &expected, const string &received, clock_t elapsed) { 
 		cerr << "Example " << casenum << "... "; 
 		
 		string verdict;
@@ -101,8 +118,8 @@ namespace moj_harness {
 		cerr << endl;
 		
 		if (verdict == "FAILED") {
-			cerr << "    Expected: " << expected << endl; 
-			cerr << "    Received: " << received << endl; 
+			cerr << "    Expected: \"" << expected << "\"" << endl; 
+			cerr << "    Received: \"" << received << "\"" << endl; 
 		}
 		
 		return verdict == "PASSED";
@@ -111,87 +128,62 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			string s                  = "test";
+			string expected__         = "tt";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = LargestSubsequence().getLargest(s);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			string s                  = "a";
+			string expected__         = "a";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = LargestSubsequence().getLargest(s);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			string s                  = "example";
+			string expected__         = "xple";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = LargestSubsequence().getLargest(s);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			string s                  = "aquickbrownfoxjumpsoverthelazydog";
+			string expected__         = "zyog";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = LargestSubsequence().getLargest(s);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
+/*      case 4: {
+			string s                  = ;
+			string expected__         = ;
+
+			clock_t start__           = clock();
+			string received__         = LargestSubsequence().getLargest(s);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 5: {
+			string s                  = ;
+			string expected__         = ;
+
+			clock_t start__           = clock();
+			string received__         = LargestSubsequence().getLargest(s);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
 /*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			string s                  = ;
+			string expected__         = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = LargestSubsequence().getLargest(s);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

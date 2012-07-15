@@ -1,35 +1,69 @@
 #include <iostream>
-#include <string>
+#include <sstream>
 #include <vector>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
 #include <algorithm>
+#include <numeric>
+#include <cstdio>
 #include <cmath>
-#include <ctime>
+#include <cstring>
 using namespace std;
 
-#define FOR(i,a,b) for(int i=(a);i<(b);++i)
-#define REP(i,n)  FOR(i,0,n)
-#define dump(x)  cerr << #x << " = " << (x) << endl;
+typedef vector<int> VI;
+typedef vector<VI> VVI;
+typedef vector<string> VS;
+typedef pair<int, int> PII;
+typedef long long LL;
+#define ALL(a)  (a).begin(),(a).end()
+#define REP(i,n) for(int i=0;i<(n);++i)
+const double EPS = 1e-10;
+const double PI  = acos(-1.0);
+#define dump(x) cerr << "  (L" << __LINE__ << ") " << #x << " = " << (x) << endl;
+#define dumpv(x) cerr << "  (L" << __LINE__ << ") " << #x << " = "; REP(q,(x).size()) cerr << (x)[q] << " "; cerr << endl;
+template<typename T1, typename T2>
+ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
+
+const int DR[] = {-1, 1, 0, 0};
+const int DC[] = {0, 0, -1, 1};
 
 class AlphabetPath {
 public:
-    string doesItExist(vector <string> letterMaze) {
-        for (int i = 0; i < letterMaze.size(); i++) {
-            for (int j = 0; j < letterMaze[i].size(); j++) {
-                if (letterMaze[i][j] >= 'A' && letterMaze[i][j] < 'Z') {
-                    bool hasPath = false;
-                    if (i > 0 && letterMaze[i-1][j] == letterMaze[i][j] + 1) hasPath = true;
-                    if (i < letterMaze.size() - 1 && letterMaze[i+1][j] == letterMaze[i][j] + 1) hasPath = true;
-                    if (j > 0 && letterMaze[i][j-1] == letterMaze[i][j] + 1) hasPath = true;
-                    if (j < letterMaze[i].size() - 1 && letterMaze[i][j+1] == letterMaze[i][j] + 1) hasPath = true;
-                    if (hasPath == false) {
-                        return "NO";
-                    }
-                }
-            }
-        }
-        return "YES";
+  string doesItExist(vector <string> letterMaze) {
+    int N = letterMaze.size();
+    int M = letterMaze[0].size();
+    int curR = -1, curC = -1;
+    REP(i, N) REP(j, M) if (letterMaze[i][j] == 'A') {
+      curR = i;
+      curC = j;
     }
+    if (curR == -1) return "NO";
+
+    char cur = 'B';
+    while (true) {
+      bool found = false;
+      REP(k, 4) {
+        int nr = curR + DR[k];
+        int nc = curC + DC[k];
+        if (nr >= 0 && nr < N && nc >= 0 && nc < M && letterMaze[nr][nc] == cur) {
+          if (cur == 'Z') return "YES";
+          curR = nr;
+          curC = nc;
+          cur++;
+          
+          found = true;
+          break;
+        }
+      }
+      if (!found) break;
+    }
+    return "NO";
+  }
 };
+
+
 
 // BEGIN CUT HERE
 namespace moj_harness {

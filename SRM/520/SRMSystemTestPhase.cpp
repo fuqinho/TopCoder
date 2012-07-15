@@ -26,15 +26,50 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int MOD = 1000000007;
 
-class SRMRoomAssignmentPhase {
+class SRMSystemTestPhase {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+
+  int countWays(vector <string> description) {
+    int N = description.size();
+
+    int comb[4][4]; memset(comb, 0, sizeof(comb));
+    for (int i = 0; i <= 3; i++) {
+      comb[i][0] = 1;
+      for (int j = 1; j <= i; j++) {
+        comb[i][j] = comb[i-1][j] + comb[i-1][j-1];
+      }
     }
-    return higher / K;
+
+    map<PII, LL> m[2];
+    m[0][PII(-100,0)] = 1;
+
+    REP (i, N) {
+      int submission = count(ALL(description[i]), 'Y');
+      for (int pass = 0; pass <= submission; pass++) {
+        for (int chal = 0; pass+chal <= submission; chal++) {
+          int patterns = comb[submission][pass] * comb[submission-pass][chal];
+          PII p(-pass, chal);
+          for (map<PII, LL>::iterator it = m[i&1].begin(); it != m[i&1].end(); it++) {
+            if (it->first <= p) {
+              m[(i+1)&1][p] += it->second * patterns;
+              m[(i+1)&1][p] %= MOD;
+            }
+            else break;
+          }
+        }
+      }
+
+      m[i&1].clear();
+    }
+    
+    LL res = 0;
+    for (map<PII, LL>::iterator it = m[N&1].begin(); it != m[N&1].end(); it++) {
+      res += it->second;
+      res %= MOD;
+    }
+    return res;
   }
 };
 
@@ -111,87 +146,79 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			string description[]      = {"YYY"};
+			int expected__            = 27;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			string description[]      = {"YNN",
+ "NYN"};
+			int expected__            = 6;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			string description[]      = {"YNN",
+ "NNN",
+ "NNY"};
+			int expected__            = 4;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
+			string description[]      = {"NNN",
+ "NNN"};
 			int expected__            = 1;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
+			string description[]      = {"YYY",
+ "YNY",
+ "NYY",
+ "YYN",
+ "YYY",
+ "YNN"};
+			int expected__            = 15176;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
-/*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
+/*      case 5: {
+			string description[]      = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 6: {
+			string description[]      = ;
+			int expected__            = ;
+
+			clock_t start__           = clock();
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
+			string description[]      = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMSystemTestPhase().countWays(vector <string>(description, description + (sizeof description / sizeof description[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

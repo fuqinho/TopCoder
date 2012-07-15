@@ -27,14 +27,39 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class SRMRoomAssignmentPhase {
+class SRMCodingPhase {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+  int countScore(vector <int> points, vector <int> skills, int luck) {
+    int maxScore = 0;
+    for (int mask = 1; mask < (1<<3); mask++) {
+      for (int l1 = 0; l1 <= luck; l1++) {
+        for (int l2 = 0; l1+l2 <= luck; l2++) {
+          for (int l3 = 0; l1+l2+l3 <= luck; l3++) {
+            int score = 0;
+            int t1 = 0, t2 = 0, t3 = 0;
+            if (mask & (1<<0)) {
+              t1 = skills[0] - l1;
+              if (t1 <= 0) break;
+              score += points[0] - 2 * t1;
+            }
+            if (mask & (1<<1)) {
+              t2 = skills[1] - l2;
+              if (t2 <= 0) break;
+              score += points[1] - 4 * t2;
+            }
+            if (mask & (1<<2)) {
+              t3 = skills[2] - l3;
+              if (t3 <= 0) break;
+              score += points[2] - 8 * t3;
+            }
+            if (t1 + t2 + t3 <= 75) {
+              maxScore = max(maxScore, score);
+            }
+          }
+        }
+      }
     }
-    return higher / K;
+    return maxScore;
   }
 };
 
@@ -111,87 +136,86 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			int points[]              = {250, 500, 1000};
+			int skills[]              = {10, 25, 40};
+			int luck                  = 0;
+			int expected__            = 1310;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			int points[]              = {300, 600, 900};
+			int skills[]              = {30, 65, 90};
+			int luck                  = 25;
+			int expected__            = 680;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			int points[]              = {250, 550, 950};
+			int skills[]              = {10, 25, 40};
+			int luck                  = 75;
+			int expected__            = 1736;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			int points[]              = {256, 512, 1024};
+			int skills[]              = {35, 30, 25};
+			int luck                  = 0;
+			int expected__            = 1216;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
+			int points[]              = {300, 600, 1100};
+			int skills[]              = {80, 90, 100};
+			int luck                  = 4;
+			int expected__            = 0;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
-/*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
+/*      case 5: {
+			int points[]              = ;
+			int skills[]              = ;
+			int luck                  = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 6: {
+			int points[]              = ;
+			int skills[]              = ;
+			int luck                  = ;
+			int expected__            = ;
+
+			clock_t start__           = clock();
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
+			int points[]              = ;
+			int skills[]              = ;
+			int luck                  = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = SRMCodingPhase().countScore(vector <int>(points, points + (sizeof points / sizeof points[0])), vector <int>(skills, skills + (sizeof skills / sizeof skills[0])), luck);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

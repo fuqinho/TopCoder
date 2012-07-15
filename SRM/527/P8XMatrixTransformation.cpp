@@ -27,14 +27,18 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class SRMRoomAssignmentPhase {
+class P8XMatrixTransformation {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
-    }
-    return higher / K;
+  string solve(vector <string> original, vector <string> target) {
+    int N = original.size();
+    int M = original[0].size();
+
+    int cnt1 = 0;
+    REP(i, N) REP(j, M) if(original[i][j] == '1') cnt1++;
+    int cnt2 = 0;
+    REP(i, N) REP(j, M) if(target[i][j] == '1') cnt2++;
+
+    return cnt1==cnt2 ? "YES" : "NO";
   }
 };
 
@@ -71,7 +75,7 @@ namespace moj_harness {
 		}
 	}
 	
-	int verify_case(int casenum, const int &expected, const int &received, clock_t elapsed) { 
+	int verify_case(int casenum, const string &expected, const string &received, clock_t elapsed) { 
 		cerr << "Example " << casenum << "... "; 
 		
 		string verdict;
@@ -101,8 +105,8 @@ namespace moj_harness {
 		cerr << endl;
 		
 		if (verdict == "FAILED") {
-			cerr << "    Expected: " << expected << endl; 
-			cerr << "    Received: " << received << endl; 
+			cerr << "    Expected: \"" << expected << "\"" << endl; 
+			cerr << "    Received: \"" << received << "\"" << endl; 
 		}
 		
 		return verdict == "PASSED";
@@ -111,87 +115,105 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			string original[]         = {"01"
+,"11"};
+			string target[]           = {"11"
+,"10"};
+			string expected__         = "YES";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			string original[]         = {"0111"
+,"0011"};
+			string target[]           = {"1011"
+,"1100"};
+			string expected__         = "YES";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			string original[]         = {"0"};
+			string target[]           = {"1"};
+			string expected__         = "NO";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			string original[]         = {"1111"
+,"1111"
+,"0000"
+,"0000"};
+			string target[]           = {"1111"
+,"1111"
+,"0000"
+,"0000"};
+			string expected__         = "YES";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
+			string original[]         = {"0110"
+,"1001"
+,"0110"};
+			string target[]           = {"1111"
+,"0110"
+,"0000"};
+			string expected__         = "YES";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
+			string original[]         = {"0000"
+,"1111"
+,"0000"};
+			string target[]           = {"1111"
+,"0000"
+,"1111"};
+			string expected__         = "NO";
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
 /*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			string original[]         = ;
+			string target[]           = ;
+			string expected__         = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			string original[]         = ;
+			string target[]           = ;
+			string expected__         = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			string original[]         = ;
+			string target[]           = ;
+			string expected__         = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			string received__         = P8XMatrixTransformation().solve(vector <string>(original, original + (sizeof original / sizeof original[0])), vector <string>(target, target + (sizeof target / sizeof target[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

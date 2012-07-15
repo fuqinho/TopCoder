@@ -26,15 +26,46 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int INF = 1000000000;
 
-class SRMRoomAssignmentPhase {
+class DucksAlignment {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+  int costToSame(vector<int>& v) {
+    int mincost = INF;
+    for (int k = v[0]; k <= v[v.size()-1]; k++) {
+      int cost = 0;
+      for (int i = 0; i < v.size(); i++) {
+        cost += abs(v[i] - k);
+      }
+      mincost = min(mincost, cost);
     }
-    return higher / K;
+    return mincost;
+  }
+
+  int costToAlign(vector<int>& v) {
+    int mincost = INF;
+    for (int k = v[0]; k <= v[v.size()-1] - (v.size()-1); k++) {
+      int cost = 0;
+      for (int i = 0; i < v.size(); i++) {
+        cost += abs(v[i] - (k + i));
+      }
+      mincost = min(mincost, cost);
+    }
+    return mincost;
+  }
+
+  int minimumTime(vector <string> grid) {
+    vector<int> rows, cols;
+    REP(i, grid.size()) REP(j, grid[i].size()) {
+      if (grid[i][j] == 'o') {
+        rows.push_back(i);
+        cols.push_back(j);
+      }
+    }
+    sort(ALL(rows));
+    sort(ALL(cols));
+    return min(costToSame(rows) + costToAlign(cols),
+               costToSame(cols) + costToAlign(rows));
   }
 };
 
@@ -111,87 +142,93 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			string grid[]             = {".o",
+ "o."};
+			int expected__            = 1;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
+			string grid[]             = {".o...",
+ "..o..",
+ "....o"};
 			int expected__            = 3;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
+		case 2: {
+			string grid[]             = {"o..........",
+ "..o........",
+ ".......o...",
+ "...........",
+ "...........",
+ "...........",
+ "........o..",
+ "..........."};
+			int expected__            = 16;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}
+		case 3: {
+			string grid[]             = {".........",
+ "....o....",
+ "........."};
+			int expected__            = 0;
+
+			clock_t start__           = clock();
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}
+		case 4: {
+			string grid[]             = {"...o..........................",
+ "............................o.",
+ ".o............................",
+ "............o.................",
+ ".................o............",
+ "......................o.......",
+ "......o.......................",
+ "....o.........................",
+ "...............o..............",
+ ".......................o......",
+ "...........................o..",
+ ".......o......................"};
+			int expected__            = 99;
+
+			clock_t start__           = clock();
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
-/*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
+/*      case 5: {
+			string grid[]             = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 6: {
+			string grid[]             = ;
+			int expected__            = ;
+
+			clock_t start__           = clock();
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
+			string grid[]             = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = DucksAlignment().minimumTime(vector <string>(grid, grid + (sizeof grid / sizeof grid[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

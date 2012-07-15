@@ -26,15 +26,62 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+LL C[11][11];
+LL POW8[11];
 
-class SRMRoomAssignmentPhase {
+class SumOfLuckiness {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+
+  long long patterns(int digits, int n4, int n7) {
+    if (n4 < 0 || n7 < 0 || digits < n4+n7) return 0;
+    return C[digits][n4] * C[digits-n4][n7] * POW8[digits-n4-n7];;
+  }
+
+  long long countSum(string s, int n4, int n7) {
+    long long res = 0;
+    for (int i = 0; i < s.size(); i++) {
+      for (int d = 0; d < s[i]-'0'; d++) {
+        if (d == 4) {
+          res += patterns(s.size()-1-i, n4-1, n7);
+        }
+        else if (d == 7) {
+          res += patterns(s.size()-1-i, n4, n7-1);
+        }
+        else {
+          res += patterns(s.size()-1-i, n4, n7);
+        }
+      }
+      if (s[i] == '4') n4--;
+      if (s[i] == '7') n7--;
     }
-    return higher / K;
+    return res;
+  }
+
+  long long countSum(int n) {
+    ostringstream oss; oss << n;
+    string s = oss.str();
+
+    long long total = 0;
+    for (int n4 = 0; n4 <= 10; n4++) {
+      for (int n7 = 0; n7 <= 10; n7++) {
+        total += abs(n4 - n7) * countSum(s, n4, n7);
+      }
+    }
+    return total;
+  }
+  
+  long long theSum(int A, int B) {
+    for (int i = 0; i <= 10; i++) {
+      C[i][0] = 1;
+      for (int j = 1; j <= i; j++) {
+        C[i][j] = C[i-1][j] + C[i-1][j-1];
+      }
+    }
+    POW8[0] = 1;
+    for (int i = 0; i < 10; i++) {
+      POW8[i+1] = POW8[i] * 8;
+    }
+    return countSum(B+1) - countSum(A);
   }
 };
 
@@ -71,7 +118,7 @@ namespace moj_harness {
 		}
 	}
 	
-	int verify_case(int casenum, const int &expected, const int &received, clock_t elapsed) { 
+	int verify_case(int casenum, const long long &expected, const long long &received, clock_t elapsed) { 
 		cerr << "Example " << casenum << "... "; 
 		
 		string verdict;
@@ -111,87 +158,78 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			int A                     = 1;
+			int B                     = 10;
+			long long expected__      = 2;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			int A                     = 40;
+			int B                     = 47;
+			long long expected__      = 8;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			int A                     = 58;
+			int B                     = 526;
+			long long expected__      = 231;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			int A                     = 4444;
+			int B                     = 7777;
+			long long expected__      = 2338;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
+			int A                     = 585858585;
+			int B                     = 858585858;
+			long long expected__      = 287481025;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
-/*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+/*      case 5: {
+			int A                     = ;
+			int B                     = ;
+			long long expected__      = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 6: {
+			int A                     = ;
+			int B                     = ;
+			long long expected__      = ;
+
+			clock_t start__           = clock();
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			int A                     = ;
+			int B                     = ;
+			long long expected__      = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			long long received__      = SumOfLuckiness().theSum(A, B);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

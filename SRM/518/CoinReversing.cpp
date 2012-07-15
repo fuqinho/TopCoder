@@ -27,14 +27,15 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class SRMRoomAssignmentPhase {
+class CoinReversing {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+  double expectedHeads(int N, vector <int> a) {
+    double p = 1.0;
+    for (int i = 0; i < a.size(); i++) {
+      double turn = (double)a[i] / N;
+      p = (1.0 - p) * turn + p * (1.0 - turn); 
     }
-    return higher / K;
+    return p * N;
   }
 };
 
@@ -71,7 +72,10 @@ namespace moj_harness {
 		}
 	}
 	
-	int verify_case(int casenum, const int &expected, const int &received, clock_t elapsed) { 
+	static const double MAX_DOUBLE_ERROR = 1e-9; static bool topcoder_fequ(double expected, double result) { if (isnan(expected)) { return isnan(result); } else if (isinf(expected)) { if (expected > 0) { return result > 0 && isinf(result); } else { return result < 0 && isinf(result); } } else if (isnan(result) || isinf(result)) { return false; } else if (fabs(result - expected) < MAX_DOUBLE_ERROR) { return true; } else { double mmin = min(expected * (1.0 - MAX_DOUBLE_ERROR), expected * (1.0 + MAX_DOUBLE_ERROR)); double mmax = max(expected * (1.0 - MAX_DOUBLE_ERROR), expected * (1.0 + MAX_DOUBLE_ERROR)); return result > mmin && result < mmax; } }
+	double moj_relative_error(double expected, double result) { if (isnan(expected) || isinf(expected) || isnan(result) || isinf(result) || expected == 0) return 0; return fabs(result-expected) / fabs(expected); }
+	
+	int verify_case(int casenum, const double &expected, const double &received, clock_t elapsed) { 
 		cerr << "Example " << casenum << "... "; 
 		
 		string verdict;
@@ -83,8 +87,13 @@ namespace moj_harness {
 			info.push_back(buf);
 		}
 		
-		if (expected == received) {
+		if (topcoder_fequ(expected, received)) {
 			verdict = "PASSED";
+			double rerr = moj_relative_error(expected, received); 
+			if (rerr > 0) {
+				sprintf(buf, "relative error %.3e", rerr);
+				info.push_back(buf);
+			}
 		} else {
 			verdict = "FAILED";
 		}
@@ -111,87 +120,69 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			int N                     = 3;
+			int a[]                   = {2,2};
+			double expected__         = 1.6666666666666667;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			int N                     = 10;
+			int a[]                   = {10,10,10};
+			double expected__         = 0.0;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			int N                     = 10;
+			int a[]                   = {2,7,1,8,2,8};
+			double expected__         = 4.792639999999999;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			int N                     = 1000;
+			int a[]                   = {916,153,357,729,183,848,61,672,295,936};
+			double expected__         = 498.1980774932278;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
+/*      case 4: {
+			int N                     = ;
+			int a[]                   = ;
+			double expected__         = ;
+
+			clock_t start__           = clock();
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 5: {
+			int N                     = ;
+			int a[]                   = ;
+			double expected__         = ;
+
+			clock_t start__           = clock();
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
 /*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
+			int N                     = ;
+			int a[]                   = ;
+			double expected__         = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			double received__         = CoinReversing().expectedHeads(N, vector <int>(a, a + (sizeof a / sizeof a[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

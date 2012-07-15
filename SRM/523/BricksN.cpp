@@ -26,15 +26,41 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+LL dp[51];
+int memo[51][51];
+const int MOD = 1000000007;
 
-class SRMRoomAssignmentPhase {
+class BricksN {
 public:
-  int countCompetitors(vector <int> ratings, int K) {
-    int higher = 0;
-    REP(i, ratings.size()) {
-      if (ratings[i] > ratings[0]) higher++;
+  int rec(int w, int h) {
+    if (w == 0 || h == 0) return 1;
+    if (memo[w][h] != -1) return memo[w][h];
+
+    LL res = 0;
+    for (int i = 0; i <= w; i++) {
+      if (w-(i+1) >= 0) {
+        LL tmp = dp[i] * rec(i, h-1) % MOD;
+        res += (tmp * rec(w-(i+1), h)) % MOD;
+      } else {
+        res += dp[i] * rec(i, h-1);
+      }
+      res %= MOD;
     }
-    return higher / K;
+    return memo[w][h] = res;
+  }
+
+  int countStructures(int w, int h, int k) {
+    memset(dp, 0, sizeof(dp));
+    dp[0] = 1;
+    for (int i = 1; i <= w; i++) {
+      for (int j = 1; j <= k && i-j >= 0; j++) {
+        dp[i] += dp[i-j];
+      }
+      dp[i] %= MOD;
+    }
+    
+    memset(memo, -1, sizeof(memo));
+    return rec(w, h);
   }
 };
 
@@ -111,87 +137,75 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			int ratings[]             = {491, 981, 1199, 763, 994, 879, 888};
-			int K                     = 3;
-			int expected__            = 2;
+			int w                     = 3;
+			int h                     = 1;
+			int k                     = 3;
+			int expected__            = 13;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = BricksN().countStructures(w, h, k);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			int ratings[]             = {1024, 1000, 600};
-			int K                     = 1;
-			int expected__            = 0;
+			int w                     = 3;
+			int h                     = 2;
+			int k                     = 3;
+			int expected__            = 83;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = BricksN().countStructures(w, h, k);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			int ratings[]             = {505, 679, 900, 1022};
-			int K                     = 2;
-			int expected__            = 1;
+			int w                     = 1;
+			int h                     = 5;
+			int k                     = 1;
+			int expected__            = 6;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = BricksN().countStructures(w, h, k);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			int ratings[]             = {716, 58, 1000, 1004, 912, 822, 453, 1100, 558};
-			int K                     = 3;
-			int expected__            = 1;
+			int w                     = 10;
+			int h                     = 10;
+			int k                     = 3;
+			int expected__            = 288535435;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 4: {
-			int ratings[]             = {422, 623, 1023, 941, 882, 776, 852, 495, 803, 622, 618, 532, 751, 500};
-			int K                     = 4;
-			int expected__            = 3;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			int ratings[]             = {1197, 1198, 1196, 1195, 1199};
-			int K                     = 1;
-			int expected__            = 2;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = BricksN().countStructures(w, h, k);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
+    case 4: {
+			int w                     = 50;
+			int h                     = 50;
+			int k                     = 50;
+			int expected__            = 92324271;
 
+			clock_t start__           = clock();
+			int received__            = BricksN().countStructures(w, h, k);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}
+/*      case 5: {
+			int w                     = ;
+			int h                     = ;
+			int k                     = ;
+			int expected__            = ;
+
+			clock_t start__           = clock();
+			int received__            = BricksN().countStructures(w, h, k);
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
 /*      case 6: {
-			int ratings[]             = ;
-			int K                     = ;
+			int w                     = ;
+			int h                     = ;
+			int k                     = ;
 			int expected__            = ;
 
 			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 7: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			int ratings[]             = ;
-			int K                     = ;
-			int expected__            = ;
-
-			clock_t start__           = clock();
-			int received__            = SRMRoomAssignmentPhase().countCompetitors(vector <int>(ratings, ratings + (sizeof ratings / sizeof ratings[0])), K);
+			int received__            = BricksN().countStructures(w, h, k);
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

@@ -27,13 +27,42 @@ template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
 
-class RainyRoad {
+class MultiplesWithLimit {
 public:
-  string isReachable(vector <string> road) {
-    for (int i = 0; i < road[0].size(); i++) {
-      if (road[0][i] == 'W' && road[1][i] == 'W') return "NO";
+  string minMultiples(int N, vector <int> forbiddenDigits) {
+    int available = (1<<10)-1;
+    REP(i, forbiddenDigits.size()) available &= ~(1 << forbiddenDigits[i]);
+
+    vector<string> best(N);
+    queue<int> q;
+    q.push(0);
+    while (!q.empty()) {
+      int now = q.front(); q.pop();
+      for (int d = 0; d <= 9; d++) if (available & (1<<d)) {
+        if (now == 0 && d == 0) continue;
+
+        int nxt = (now * 10 + d) % N;
+        if (best[nxt] == "") {
+          best[nxt] = best[now] + char('0' + d);
+          q.push(nxt);
+          if (nxt == 0) goto END;
+        }
+      }
     }
-    return "YES";
+END:
+
+    if (best[0] == "") {
+      return "IMPOSSIBLE";
+    } else {
+      if (best[0].size() >= 9) {
+        ostringstream oss;
+        oss << best[0].substr(0, 3) << "..." << best[0].substr(best[0].size()-3, 3)
+            << "(" << best[0].size() << " digits)";
+        return oss.str();
+      } else {
+        return best[0];
+      }
+    }
   }
 };
 
@@ -110,93 +139,78 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			string road[]             = {".W.."
-,"...."};
-			string expected__         = "YES";
+			int N                     = 8;
+			int forbiddenDigits[]     = {2,3,4,5,6,7,8,9};
+			string expected__         = "1000";
 
 			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			string road[]             = {".W.."
-,"..W."};
-			string expected__         = "YES";
+			int N                     = 9;
+			int forbiddenDigits[]     = {1,3,4,5,6,7,8,9};
+			string expected__         = "222...222(9 digits)";
 
 			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			string road[]             = {".W..W.."
-,"...WWW."};
-			string expected__         = "NO";
+			int N                     = 524;
+			int forbiddenDigits[]     = {5,2,4};
+			string expected__         = "3668";
 
 			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			string road[]             = {".."
-,"WW"};
-			string expected__         = "YES";
+			int N                     = 10000;
+			int forbiddenDigits[]     = {0};
+			string expected__         = "IMPOSSIBLE";
 
 			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			string road[]             = {".WWWW."
-,"WWWWWW"};
-			string expected__         = "NO";
+			int N                     = 1;
+			int forbiddenDigits[]     = {0,1,2,3,4,5,6,7,8,9};
+			string expected__         = "IMPOSSIBLE";
 
 			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 5: {
-			string road[]             = {".W.W.W."
-,"W.W.W.W"};
-			string expected__         = "YES";
-
-			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}
-		case 6: {
-			string road[]             = {".............................................W."
-,".............................................W."};
-			string expected__         = "NO";
-
-			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
+/*      case 5: {
+			int N                     = ;
+			int forbiddenDigits[]     = ;
+			string expected__         = ;
+
+			clock_t start__           = clock();
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
+/*      case 6: {
+			int N                     = ;
+			int forbiddenDigits[]     = ;
+			string expected__         = ;
+
+			clock_t start__           = clock();
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
+			return verify_case(casenum, expected__, received__, clock()-start__);
+		}*/
 /*      case 7: {
-			string road[]             = ;
+			int N                     = ;
+			int forbiddenDigits[]     = ;
 			string expected__         = ;
 
 			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 8: {
-			string road[]             = ;
-			string expected__         = ;
-
-			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
-			return verify_case(casenum, expected__, received__, clock()-start__);
-		}*/
-/*      case 9: {
-			string road[]             = ;
-			string expected__         = ;
-
-			clock_t start__           = clock();
-			string received__         = RainyRoad().isReachable(vector <string>(road, road + (sizeof road / sizeof road[0])));
+			string received__         = MultiplesWithLimit().minMultiples(N, vector <int>(forbiddenDigits, forbiddenDigits + (sizeof forbiddenDigits / sizeof forbiddenDigits[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

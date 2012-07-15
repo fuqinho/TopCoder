@@ -26,33 +26,44 @@ const double PI  = acos(-1.0);
 template<typename T1, typename T2>
 ostream& operator<<(ostream& s, const pair<T1, T2>& d) {return s << "(" << d.first << "," << d.second << ")";}
 
+const int INF = 1000000000;
 
-class CountingSeries {
+class SquaredSubsets {
 public:
-  bool isInAP(LL n, LL a, LL b) {
-    return n >= a && (n - a) % b == 0;
-  }
 
-  long long countThem(long long a, long long b, long long c, long long d, long long upperBound) {
-    LL numAP = (a <= upperBound ? (upperBound - a) / b + 1 : 0);
-    LL numGP = 0;
-    LL numCommon = 0;
+  long long countSubsets(int n, vector <int> px, vector <int> py) {
+    vector<int> x = px, y = py;
+    x.push_back(-INF); x.push_back(INF); y.push_back(-INF); y.push_back(INF);
+    sort(x.begin(), x.end());
+    sort(y.begin(), y.end());
+    x.erase(unique(x.begin(), x.end()), x.end());
+    y.erase(unique(y.begin(), y.end()), y.end());
 
-    if (d == 1) {
-      if (c <= upperBound) {
-        numGP = 1;
-        if (isInAP(c, a, b)) numCommon = 1;
-      }
-    } else {
-      LL cur = c;
-      while (cur <= upperBound) {
-        numGP ++;
-        if (isInAP(cur, a, b)) numCommon++;
-        cur *= d;
+    set<LL> res;
+
+    for (int left = 1; left < x.size()-1; left++) {
+      for (int right = left; right < x.size()-1; right++) {
+        for (int top = 1; top < y.size()-1; top++) {
+          for (int bottom = top; bottom < y.size()-1; bottom++) {
+            int width = x[right] - x[left];
+            int height = y[bottom] - y[top];
+            int outer_width = x[right+1] - x[left-1];
+            int outer_height = y[bottom+1] - y[top-1];
+            if (width <= n && height <= n && outer_width > n && outer_height > n) {
+              LL mask = 0;
+              for (int i = 0; i < px.size(); i++) {
+                if (px[i] >= x[left] && px[i] <= x[right] && py[i] >= y[top] && py[i] <= y[bottom]) {
+                  mask |= (1LL<<i);
+                }
+              }
+              if (mask) res.insert(mask);
+            }
+          }
+        }
       }
     }
 
-    return numAP + numGP - numCommon;
+    return res.size();
   }
 };
 
@@ -129,102 +140,86 @@ namespace moj_harness {
 	int run_test_case(int casenum) {
 		switch (casenum) {
 		case 0: {
-			long long a               = 1;
-			long long b               = 1;
-			long long c               = 1;
-			long long d               = 2;
-			long long upperBound      = 1000;
-			long long expected__      = 1000;
+			int n                     = 5;
+			int x[]                   = {-5,0,5};
+			int y[]                   = {0,0,0};
+			long long expected__      = 5;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 1: {
-			long long a               = 3;
-			long long b               = 3;
-			long long c               = 1;
-			long long d               = 2;
-			long long upperBound      = 1000;
-			long long expected__      = 343;
+			int n                     = 10;
+			int x[]                   = {-5,0,5};
+			int y[]                   = {0,0,0};
+			long long expected__      = 5;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 2: {
-			long long a               = 40;
-			long long b               = 77;
-			long long c               = 40;
-			long long d               = 100000;
-			long long upperBound      = 40;
-			long long expected__      = 1;
+			int n                     = 100000000;
+			int x[]                   = {-1,-1,-1,0,1,1,1};
+			int y[]                   = {-1,0,1,1,-1,0,1};
+			long long expected__      = 21;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 3: {
-			long long a               = 452;
-			long long b               = 24;
-			long long c               = 4;
-			long long d               = 5;
-			long long upperBound      = 600;
-			long long expected__      = 10;
+			int n                     = 5;
+			int x[]                   = {5,3,6,2,1,6,4,4,7,-1,-4,-7,2,-2,0};
+			int y[]                   = {0,-1,8,-5,2,5,-8,8,-6,4,3,2,7,3,5};
+			long long expected__      = 66;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 		case 4: {
-			long long a               = 234;
-			long long b               = 24;
-			long long c               = 377;
-			long long d               = 1;
-			long long upperBound      = 10000;
-			long long expected__      = 408;
+			int n                     = 1;
+			int x[]                   = {-1,0};
+			int y[]                   = {0,0};
+			long long expected__      = 3;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}
 
 		// custom cases
 
 /*      case 5: {
-			long long a               = ;
-			long long b               = ;
-			long long c               = ;
-			long long d               = ;
-			long long upperBound      = ;
+			int n                     = ;
+			int x[]                   = ;
+			int y[]                   = ;
 			long long expected__      = ;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 6: {
-			long long a               = ;
-			long long b               = ;
-			long long c               = ;
-			long long d               = ;
-			long long upperBound      = ;
+			int n                     = ;
+			int x[]                   = ;
+			int y[]                   = ;
 			long long expected__      = ;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 /*      case 7: {
-			long long a               = ;
-			long long b               = ;
-			long long c               = ;
-			long long d               = ;
-			long long upperBound      = ;
+			int n                     = ;
+			int x[]                   = ;
+			int y[]                   = ;
 			long long expected__      = ;
 
 			clock_t start__           = clock();
-			long long received__      = CountingSeries().countThem(a, b, c, d, upperBound);
+			long long received__      = SquaredSubsets().countSubsets(n, vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])));
 			return verify_case(casenum, expected__, received__, clock()-start__);
 		}*/
 		default:

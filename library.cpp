@@ -1,13 +1,18 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 #include <queue>
+#include <functional>
+#include <cassert>
 using namespace std;
 
 
 template<class T1,class T2> ostream& operator<<(ostream& o,const pair<T1,T2>& p){return o<<"("<<p.first<<","<<p.second<<")";}
 template<class T> ostream& operator<<(ostream& o,const vector<T>& v){o<<"[";for(typename vector<T>::const_iterator i=v.begin();i!=v.end();++i){if (i != v.begin()) o << ", ";o<<(*i);}o<<"]";return o;}
-template<class T> ostream& operator<<(ostream& o,const set<T>& s){o<<"{";for(typename set<T>::const_iterator i=s.begin();i!=s.end();++i){if(i!=s.begin())o<<", ";o<<(*i);}o<<"}";return o;}
+template<class T> ostream& operator<<(ostream& o, const set<T>& s){
+	o<<"{";
+	for(typename set<T>::const_iterator i=s.begin();i!=s.end();++i){if(i!=s.begin())o<<", ";o<<(*i);}o<<"}";return o;}
 template<class K,class V> ostream& operator<<(ostream& o,const map<K,V>& m){o<<"{";for(typename map<K,V>::const_iterator i=m.begin();i!=m.end();++i){if(i!=m.begin())o<<", ";o<<i->first<<":"<<i->second;}o<<"}";return o;}
 template<class T> ostream& operator<<(ostream& o,const vector<vector<T> >& m){o<<"[\n";for(typename vector<vector<T> >::const_iterator i=m.begin();i!=m.end();++i){o<<"  "<<(*i);o<<(i+1!=m.end()?",\n":"\n");}o<<"]\n";return o;}
 string bitstr(int n,int d=0){string r;for(int i=0;i<d||n>0;++i,n>>=1){r+=(n&1)?"1":"0";}reverse(r.begin(),r.end());return r;}
@@ -221,7 +226,7 @@ struct UnionFind {
     }
     int size() {
         int res = 0;
-        for (int i=0; i<p.size(); i++) if (p[i] == i) res++;
+        for (unsigned int i=0; i<p.size(); i++) if (p[i] == i) res++;
         return res;
     }
     vector<int> p, rank;
@@ -238,7 +243,7 @@ struct BIT {
         return res;
     }
     long long sum(int i, int j) { return sum(j) - sum(i-1); }
-    void add(int i, long long x) {
+    void add(unsigned int i, long long x) {
         while (i < bit.size()) { bit[i] += x; i += (i & -i); }
     }
 };
@@ -325,7 +330,7 @@ public:
     int maxMatch() {
         fill(match.begin(), match.end(), -1);
         int res = 0;
-        for (int i=0; i<G.size(); i++) {
+        for (unsigned int i=0; i<G.size(); i++) {
             if (match[i] < 0) {
                 fill(used.begin(), used.end(), false);
                 if (dfs(i)) res++;
@@ -393,7 +398,7 @@ private:
         que.push(s);
         while (que.size() > 0) {
             int v = que.front(); que.pop();
-            for (int i = 0; i < m_edges[v].size(); i++) {
+            for (unsigned int i = 0; i < m_edges[v].size(); i++) {
                 Edge& e = m_edges[v][i];
                 if (e.cap > 0 && m_level[e.to] == -1) {
                     m_level[e.to] = m_level[v] + 1;

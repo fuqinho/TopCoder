@@ -19,6 +19,7 @@ using namespace std;
 #define FOR(i,b,e) for(int i=(b); i<(int)(e); i++)
 #define EACH(i,c) for(__typeof((c).begin()) i=(c).begin(); i!=(c).end(); i++)
 #define ALL(c) (c).begin(), (c).end()
+#define mp make_pair
 #define dump(x) cerr << #x << " = " << (x) << endl;
 typedef long long ll;
 $BEGINCUT$

@@ -112,26 +112,88 @@ Mat operator*(const Mat& x, const Mat& y) {
     return r;
 }
 
+//===============================================================//
+//                        Geometry
+//===============================================================//
+
+///////////////////////////////////////////////////////////////////
+// 2D vector
+template<class T> struct Vec2d {
+    T x, y;
+    Vec2d(){};
+    Vec2d(T x, T y): x(x), y(y) {}
+};
+template<class T> ostream& operator<<(ostream& o,const Vec2d<T>& v){
+    o <<"(" << v.x << "," << v.y << ")";
+    return o;
+}
+template<class T> Vec2d<T> operator-(const Vec2d<T>& a, const Vec2d<T>& b) {
+    return Vec2d<T>(a.x - b.x, a.y - b.y);
+}
+template<class T> Vec2d<T> operator+(const Vec2d<T>& a, const Vec2d<T>& b) {
+    return Vec2d<T>(a.x + b.x, a.y + b.y);
+}
+template<class T> T operator*(const Vec2d<T>& a, const Vec2d<T>& b) {
+    return a.x * b.x + a.y * b.y;
+}
+template<class T> T cross(const Vec2d<T>& a, const Vec2d<T>& b) {
+    return a.x * b.y - a.y * b.x;
+}
+template<class T> int ccw(const Vec2d<T>& a, const Vec2d<T>& b) {
+    T cp = cross(a, b);
+    if (cp > 0) return 1;
+    if (cp < 0) return -1;
+    return 0;
+}
+template<class T> bool is_parallel(const Vec2d<T>& a, const Vec2d<T>& b) {
+    return ccw(a, b) == 0;
+}
+template<class T> bool is_inside(const Vec2d<T> p, const vector<Vec2d<T> >& ps) {
+    for (int i = 0; i < ps.size(); i++) {
+        Vec2d<T> p_next = (i+1 < ps.size() ? ps[i+1] : ps[0]);
+        if (cross(p_next - ps[i], p - ps[i]) >= 0) return false;
+    }
+    return true;
+}
+///////////////////////////////////////////////////////////////////
+// 2D segment
+template<class T> struct Seg2d {
+    Vec2d<T> o, t;
+    Seg2d(const Vec2d<T>& o, const Vec2d<T>& t): o(o), t(t) {}
+    Seg2d(T x1, T y1, T x2, T y2): o(Vec2d<T>(x1, y1)), t(Vec2d<T>(x2, y2)) {}
+};
+template<class T> ostream& operator<<(ostream& o,const Seg2d<T>& v){
+    o << "[" << v.o << "->" << v.t << "]";
+    return o;
+}
+template<class T> bool is_both_sides(const Seg2d<T>& a, const Seg2d<T>& b) {
+    return ccw(a.t-a.o, b.o-a.o) * ccw(a.t-a.o, b.t-a.o) <= 0;
+}
+template<class T> bool is_parallel(const Seg2d<T>& a, const Seg2d<T>& b) {
+    return is_parallel(a.t - a.o, b.t - b.o);
+}
+template<class T> bool is_on(const Vec2d<T>& p, const Seg2d<T>& s) {
+    return ccw(s.o - p, s.t - p) == 0 && (s.o - p) * (s.t - p) <= 0;
+}
+template<class T> bool is_intersects(const Seg2d<T>& a, const Seg2d<T>& b) {
+    if (is_parallel(a, b))
+        return is_on(a.o, b) || is_on(a.t, b) || is_on(b.o, a) || is_on(b.t, a);
+    else
+        return is_both_sides(a, b) && is_both_sides(b, a);
+}
+
+///////////////////////////////////////////////////////////////////
+// 3D vector
 struct vec3d {
     int x, y, z;
     vec3d() {};
     vec3d(int x, int y, int z): x(x), y(y), z(z) {}
 };
-
 int dot(const vec3d& a, const vec3d& b) {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
-
 vec3d cross(const vec3d& a, const vec3d& b) {
     return vec3d(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
-}
-
-typedef vector<int> Vec;
-typedef vector<Vec> Mat;
-Mat operator+(const Mat& x, const Mat& y) {
-    assert(x.size() == y.size() && x[0].size() == y[0].size());
-    Mat res(x.size(), mat.res())
-    for (int i=0; i<x.size(); i++) for(int 
 }
 
 //===============================================================//

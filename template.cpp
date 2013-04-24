@@ -8,6 +8,7 @@
 #include <bitset>
 #include <algorithm>
 #include <numeric>
+#include <functional>
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>

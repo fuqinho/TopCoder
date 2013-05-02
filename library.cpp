@@ -488,6 +488,54 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////////////
+// 強連結成分分解
+class SCC {
+public:
+    SCC(int n) {
+        e = re = vector<vector<int> >(n);
+        cmp = vector<int>(n);
+        used = vector<bool>(n);
+    }
+    void addEdge(int from, int to) {
+        e[from].push_back(to);
+        re[to].push_back(from);
+    }
+    pair<vector<vector<int> >, vector<int> > getSCCGraph() {
+        fill(used.begin(), used.end(), false);
+        for (size_t i = 0; i < e.size(); i++) if (!used[i]) dfs(i);
+        fill(used.begin(), used.end(), false);
+        int n = 0;
+        for (size_t i = 0; i < e.size(); i++) if (!used[i]) rdfs(i, n++);
+        // make graph based on strongly connected components
+        vector<vector<int> > g(n);
+        for (size_t i = 0; i < e.size(); i++)
+            for (size_t j = 0; j < e[i].size(); j++) {
+                int from = cmp[i], to = cmp[e[i][j]];
+                if (from != to && find(g[from].begin(), g[from].end(), to) == g[from].end())
+                    g[from].push_back(to);
+            }
+        return make_pair(g, cmp);
+    }
+private:
+    vector<vector<int> > e, re;
+    vector<int> cmp, vs;
+    vector<bool> used;
+    void dfs(int v) {
+        used[v] = true;
+        for (size_t i = 0; i < e[v].size(); i++)
+            if (!used[e[v][i]]) dfs(e[v][i]);
+        vs.push_back(v);
+    }
+    void rdfs(int v, int k) {
+        used[v] = true;
+        cmp[v] = k;
+        for (size_t i = 0; i < re[v].size(); i++)
+            if (!used[re[v][i]]) rdfs(re[v][i], k);
+    }
+};
+
+
 //===============================================================//
 //                        String
 //===============================================================//

@@ -7,16 +7,14 @@
 #include <cassert>
 using namespace std;
 
-
+///////////////////////////////////////////////////////////////////
+// for print-debugging
 template<class T1,class T2> ostream& operator<<(ostream& o,const pair<T1,T2>& p){return o<<"("<<p.first<<","<<p.second<<")";}
 template<class T> ostream& operator<<(ostream& o,const vector<T>& v){o<<"[";for(typename vector<T>::const_iterator i=v.begin();i!=v.end();++i){if (i != v.begin()) o << ", ";o<<(*i);}o<<"]";return o;}
-template<class T> ostream& operator<<(ostream& o, const set<T>& s){
-	o<<"{";
-	for(typename set<T>::const_iterator i=s.begin();i!=s.end();++i){if(i!=s.begin())o<<", ";o<<(*i);}o<<"}";return o;}
+template<class T> ostream& operator<<(ostream& o, const set<T>& s){o<<"{";for(typename set<T>::const_iterator i=s.begin();i!=s.end();++i){if(i!=s.begin())o<<", ";o<<(*i);}o<<"}";return o;}
 template<class K,class V> ostream& operator<<(ostream& o,const map<K,V>& m){o<<"{";for(typename map<K,V>::const_iterator i=m.begin();i!=m.end();++i){if(i!=m.begin())o<<", ";o<<i->first<<":"<<i->second;}o<<"}";return o;}
 template<class T> ostream& operator<<(ostream& o,const vector<vector<T> >& m){o<<"[\n";for(typename vector<vector<T> >::const_iterator i=m.begin();i!=m.end();++i){o<<"  "<<(*i);o<<(i+1!=m.end()?",\n":"\n");}o<<"]\n";return o;}
 string bitstr(int n,int d=0){string r;for(int i=0;i<d||n>0;++i,n>>=1){r+=(n&1)?"1":"0";}reverse(r.begin(),r.end());return r;}
-
 
 //===============================================================//
 //                        Number theory
@@ -94,10 +92,10 @@ std::ostream& operator<<(std::ostream& os, const mint& x) {return os<<x.v;}
 typedef vector<int> Vec;
 typedef vector<Vec> Mat;
 Mat E(size_t n) {
-   Mat r(n, Vec(n));
-   for (size_t i = 0; i < n; i++)
-       r[i][i] = 1;
-   return r;
+    Mat r(n, Vec(n));
+    for (size_t i = 0; i < n; i++)
+        r[i][i] = 1;
+    return r;
 }
 Mat operator+(const Mat& x, const Mat& y) {
     assert(x.size() == y.size() && x[0].size() == y[0].size());
@@ -125,41 +123,46 @@ Mat operator*(const Mat& x, const Mat& y) {
 // 2D vector
 template<class T> struct Vec2d {
     T x, y;
-    Vec2d(){};
+    Vec2d() {};
     Vec2d(T x, T y): x(x), y(y) {}
 };
-template<class T> ostream& operator<<(ostream& o,const Vec2d<T>& v){
-    o <<"(" << v.x << "," << v.y << ")";
-    return o;
-}
-template<class T> Vec2d<T> operator-(const Vec2d<T>& a, const Vec2d<T>& b) {
-    return Vec2d<T>(a.x - b.x, a.y - b.y);
-}
-template<class T> Vec2d<T> operator+(const Vec2d<T>& a, const Vec2d<T>& b) {
-    return Vec2d<T>(a.x + b.x, a.y + b.y);
-}
-template<class T> T operator*(const Vec2d<T>& a, const Vec2d<T>& b) {
-    return a.x * b.x + a.y * b.y;
-}
-template<class T> T cross(const Vec2d<T>& a, const Vec2d<T>& b) {
-    return a.x * b.y - a.y * b.x;
-}
-template<class T> int ccw(const Vec2d<T>& a, const Vec2d<T>& b) {
-    T cp = cross(a, b);
-    if (cp > 0) return 1;
-    if (cp < 0) return -1;
-    return 0;
-}
-template<class T> bool is_parallel(const Vec2d<T>& a, const Vec2d<T>& b) {
-    return ccw(a, b) == 0;
-}
+template<class T> bool operator==(const Vec2d<T>& a, const Vec2d<T>& b) {return a.x==b.x && a.y==b.y;}
+template<class T> bool operator!=(const Vec2d<T>& a, const Vec2d<T>& b) {return !(a==b); }
+template<class T> bool operator< (const Vec2d<T>& a, const Vec2d<T>& b) {return a.x<b.x || (!(b.x<a.x) && a.y<b.y);}
+template<class T> bool operator<=(const Vec2d<T>& a, const Vec2d<T>& b) {return !(b<a);}
+template<class T> bool operator> (const Vec2d<T>& a, const Vec2d<T>& b) {return b<a;}
+template<class T> bool operator>=(const Vec2d<T>& a, const Vec2d<T>& b) {return !(a<b);}
+template<class T> ostream& operator<<(ostream& o,const Vec2d<T>& v) {o <<"(" << v.x << "," << v.y << ")"; return o;}
+template<class T> Vec2d<T> operator-(const Vec2d<T>& a, const Vec2d<T>& b) {return Vec2d<T>(a.x-b.x,a.y-b.y);}
+template<class T> Vec2d<T> operator+(const Vec2d<T>& a, const Vec2d<T>& b) {return Vec2d<T>(a.x+b.x,a.y+b.y);}
+template<class T> T operator*(const Vec2d<T>& a, const Vec2d<T>& b) {return a.x*b.x+a.y*b.y;}
+
+template<class T> T cross(const Vec2d<T>& a, const Vec2d<T>& b) {return a.x*b.y-a.y*b.x;}
+template<class T> int ccw(const Vec2d<T>& a, const Vec2d<T>& b) {T cp=cross(a, b); return cp ? (cp>0?1:-1) : 0;}
+template<class T> bool is_parallel(const Vec2d<T>& a, const Vec2d<T>& b) {return ccw(a, b) == 0;}
 template<class T> bool is_inside(const Vec2d<T> p, const vector<Vec2d<T> >& ps) {
     for (int i = 0; i < ps.size(); i++) {
         Vec2d<T> p_next = (i+1 < ps.size() ? ps[i+1] : ps[0]);
-        if (cross(p_next - ps[i], p - ps[i]) >= 0) return false;
+        if (cross(p_next - ps[i], p - ps[i]) < 0) return false;
     }
     return true;
 }
+template<class T> vector<Vec2d<T> > convex_hull(vector<Vec2d<T> >& ps) {
+    sort(ps.begin(), ps.end());
+    int k = 0;
+    vector<Vec2d<T> > qs(ps.size() * 2);
+    for (int i = 0; i < (int)ps.size(); i++) {
+        while (k > 1 && ccw(qs[k-1] - qs[k-2], ps[i] - qs[k-1]) <= 0) k--;
+        qs[k++] = ps[i];
+    }
+    for (int i = (int)ps.size()-2, t = k; i >= 0; i--) {
+        while (k > t && ccw(qs[k-1] - qs[k-2], ps[i] - qs[k-1]) <= 0) k--;
+        qs[k++] = ps[i];
+    }
+    qs.resize(k-1);
+    return qs;
+}
+
 ///////////////////////////////////////////////////////////////////
 // 2D segment
 template<class T> struct Seg2d {
@@ -252,7 +255,7 @@ struct BIT {
 // Meldable Heap
 //  (confirmed at http://utpc2012.contest.atcoder.jp/tasks/utpc2012_12)
 template<class T> class SkewHeap {
-  public:
+public:
     SkewHeap() : root(NULL), sz(0) {}
     bool empty()            { return root == NULL; }
     T top()                 { return root->val; }
@@ -260,7 +263,7 @@ template<class T> class SkewHeap {
     void pop()              { Node* old = root; root = meld(root->l, root->r); delete old; sz--; }
     void meld(SkewHeap& a)  { root = meld(root, a.root); sz += a.size(); }
     int size()              { return sz; }
-  private:
+private:
     struct Node {
         Node *l, *r;
         T val;
@@ -282,7 +285,7 @@ template<class T> class SkewHeap {
 // Meldable Median Heap
 //  (confirmed at http://utpc2012.contest.atcoder.jp/tasks/utpc2012_12)
 template<class T> class MedianHeap {
-  public:
+public:
     bool empty() { return small.empty(); }
     T median() { return small.top(); }
     void push(T val) {
@@ -291,7 +294,7 @@ template<class T> class MedianHeap {
     }
     void pop() { small.pop(); maintain(); }
     void meld(MedianHeap& a) { small.meld(a.small); large.meld(a.large); maintain(); }
-  private:
+private:
     SkewHeap<T> small, large;
     void maintain() {
         while (small.size() > large.size()+1) {
@@ -366,8 +369,8 @@ public:
         m_iter = vector<int>(nElement);
     }
     void addEdge(int from, int to, int cap) {
-        m_edges[from].push_back(Edge(to, cap, m_edges[to].size()));
-        m_edges[to].push_back(Edge(from, 0, m_edges[from].size()-1));
+        m_edges[from].push_back(Edge(to, cap, (int)m_edges[to].size()));
+        m_edges[to].push_back(Edge(from, 0, (int)m_edges[from].size()-1));
     }
     int maxFlow(int s, int t) {
         int flow = 0;
@@ -436,8 +439,8 @@ public:
         preve = vector<int>(n);
     }
     void add_edge(int from, int to, int cap, int cost) {
-        G[from].push_back(edge(to, cap, cost, G[to].size()));
-        G[to].push_back(edge(from, 0, -cost, G[from].size()-1));
+        G[from].push_back(edge(to, cap, cost, (int)G[to].size()));
+        G[to].push_back(edge(from, 0, -cost, (int)G[from].size()-1));
     }
     int min_cost_flow(int s, int t, int f) {
         int res = 0;
@@ -503,10 +506,10 @@ public:
     }
     pair<vector<vector<int> >, vector<int> > getSCCGraph() {
         fill(used.begin(), used.end(), false);
-        for (size_t i = 0; i < e.size(); i++) if (!used[i]) dfs(i);
+        for (int i = 0; i < (int)e.size(); i++) if (!used[i]) dfs(i);
         fill(used.begin(), used.end(), false);
         int n = 0;
-        for (size_t i = 0; i < e.size(); i++) if (!used[i]) rdfs(i, n++);
+        for (int i = 0; i < (int)e.size(); i++) if (!used[i]) rdfs(i, n++);
         // make graph based on strongly connected components
         vector<vector<int> > g(n);
         for (size_t i = 0; i < e.size(); i++)
@@ -545,7 +548,7 @@ private:
 //  (confirmed at SRM 433 Div1 250)
 int count_by_KMP(const string& T, const string& P) {
     // compute prefix funtion
-    int m = P.length();
+    int m = (int)P.length();
     vector<int> p(m+1);
     p[1] = 0;
     int k = 0;
@@ -572,6 +575,7 @@ int count_by_KMP(const string& T, const string& P) {
 //===============================================================//
 //                        Test code
 //===============================================================//
+
 int main() {
     BipartGraph bg(10);
     bg.addEdge(0, 5); bg.addEdge(1, 5);
@@ -582,11 +586,11 @@ int main() {
     cerr << uf.same(1, 8) << endl;
     cerr << uf.same(5, 9) << endl;
     cerr << uf.size() << endl;
-
+    
     mint a = 0;
     a += 3; a *= 3; a -= 2*a;
     cerr << a << endl;
-
+    
     map<int,int> m = factorize(40);
     for (map<int,int>::iterator itr = m.begin(); itr != m.end(); itr++)
         cerr << itr->first << "^" << itr->second << " ";

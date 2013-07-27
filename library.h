@@ -78,12 +78,46 @@ struct mint {
     mint& operator/= (const mint& o) {v = (o.inv()*=v).v; return *this;}
     mint inv() const {return (*this).pow(n-2);}
     mint pow(int e) const {mint r=1,x=v; while(e){if(e&1)r*=x; x*=x; e>>=1;} return r;}
+    operator int() const {return v;}
 };
 mint operator+(const mint& x, const mint& y) {return (x.v+y.v)%mint::n;}
 mint operator-(const mint& x, const mint& y) {return (x.v-y.v+mint::n)%mint::n;}
 mint operator*(const mint& x, const mint& y) {return ((long long)x.v*y.v)%mint::n;}
 mint operator/(const mint& x, const mint& y) {return x*y.inv();}
 std::ostream& operator<<(std::ostream& os, const mint& x) {return os<<x.v;}
+
+///////////////////////////////////////////////////////////////////
+//// 有理数クラス
+long long gcd(long long a, long long b) { return b == 0 ? a : gcd(b, a%b); }
+long long lcm(long long a, long long b) { return a / gcd(a, b) * b; }
+struct Rational {
+    long long n, d;
+    Rational(long long n, long long d): n(n),d(d) { reduce(); }
+    Rational(): n(0),d(1) {};
+    void reduce() {
+        if (n == 0) {
+            d = 1;
+        } else {
+            long long div = gcd(n, d);
+            n /= div;
+            d /= div;
+        }
+    }
+};
+Rational operator*(const Rational& l, const Rational& r) {
+    return Rational(l.n * r.n, l.d * r.d);
+}
+Rational operator/(const Rational& l, const Rational& r) {
+    return Rational(l.n * r.d, l.d * r.n);
+}
+Rational operator+(const Rational& l, const Rational& r) {
+    long long deno = lcm(l.d, r.d);
+    return Rational(deno / l.d * l.n + deno / r.d * r.n, deno);
+}
+Rational operator-(const Rational& l, const Rational& r) {
+    long long deno = lcm(l.d, r.d);
+    return Rational(deno / l.d * l.n - deno / r.d * r.n, deno);
+}
 
 
 //===============================================================//
@@ -509,7 +543,7 @@ public:
         for (int i = 0; i < (int)e.size(); i++) if (!used[i]) dfs(i);
         fill(used.begin(), used.end(), false);
         int n = 0;
-        for (int i = 0; i < (int)e.size(); i++) if (!used[i]) rdfs(i, n++);
+        for (int i = (int)vs.size()-1; i >= 0; i--) if (!used[vs[i]]) rdfs(vs[i], n++);
         // make graph based on strongly connected components
         vector<vector<int> > g(n);
         for (size_t i = 0; i < e.size(); i++)

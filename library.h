@@ -155,6 +155,71 @@ Mat operator*(const Mat& x, const Mat& y) {
 
 ///////////////////////////////////////////////////////////////////
 // 2D vector
+struct Vec { double x, y; Vec() {}; Vec(double x, double y): x(x), y(y) {}};
+ostream& operator<<(ostream& o,const Vec& v) {o <<"(" << v.x << "," << v.y << ")"; return o;}
+// comparer
+bool operator==(const Vec& a, const Vec& b) {return a.x==b.x && a.y==b.y;}
+bool operator!=(const Vec& a, const Vec& b) {return !(a==b); }
+bool operator< (const Vec& a, const Vec& b) {return a.x<b.x || (!(b.x<a.x) && a.y<b.y);}
+bool operator<=(const Vec& a, const Vec& b) {return !(b<a);}
+bool operator> (const Vec& a, const Vec& b) {return b<a;}
+bool operator>=(const Vec& a, const Vec& b) {return !(a<b);}
+// basic operations
+Vec operator-(const Vec& a, const Vec& b) {return Vec(a.x-b.x,a.y-b.y);}
+Vec operator+(const Vec& a, const Vec& b) {return Vec(a.x+b.x,a.y+b.y);}
+Vec operator*(const Vec& a, double m) {return Vec(a.x*m, a.y*m);}
+Vec operator*(double m, const Vec& a) {return Vec(a.x*m, a.y*m);}
+double dot(const Vec& a, const Vec& b) {return a.x*b.x+a.y*b.y;}
+double cross(const Vec& a, const Vec& b) {return a.x*b.y-a.y*b.x;}
+double norm(const Vec& a) {return sqrt(a.x*a.x+a.y*a.y);}
+bool is_parallel(const Vec& a, const Vec& b) {return cross(a, b) == 0;}
+int ccw(const Vec& a, const Vec& b) {double cp=cross(a, b); return cp?(cp>0?1:-1):0;}
+
+// 2直線の交点
+Vec intersection(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
+    return p1 + (cross(q2-q1,q1-p1)/cross(q2-q1,p2-p1)) * (p2-p1);}
+// 点と直線の距離
+double distance(const Vec& p1, const Vec& p2, const Vec& q) {
+    return abs(cross(p2-p1,q-p1))/norm(p2-p1);}
+// 点qが線分p1p2上にあるかどうか
+bool on_seg(const Vec& p1, const Vec& p2, const Vec& q) {
+    return cross(p1-q,p2-q) == 0 && dot(p1-q,p2-q) <= 0;}
+// 線分の交差判定
+bool on_both_sides(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
+    return ccw(p2-p1,q1-p1) * ccw(p2-p1,p2-p1) <= 0;
+}
+bool has_intersection(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
+    if (is_parallel(p2-p1, q2-q1))
+        return on_seg(p1,p2,q1) || on_seg(p1,p2,q2) || on_seg(q1,q2,p1) || on_seg(q1,q2,p2);
+    else
+        return on_both_sides(p1,p2,q1,q2) && on_both_sides(q1,q2,p1,p2);
+}
+// pがpsにより作られる多角形の内側にあるか判定.psは左回りを想定.
+bool is_inside(const Vec& p, const vector<Vec>& ps) {
+    for (int i = 0; i < ps.size(); i++) {
+        Vec p_next = (i+1 < ps.size() ? ps[i+1] : ps[0]);
+        if (cross(p_next - ps[i], p - ps[i]) < 0) return false;
+    }
+    return true;
+}
+// 凸包
+vector<Vec> convex_hull(vector<Vec>& ps) {
+    sort(ps.begin(), ps.end());
+    int k = 0;
+    vector<Vec> qs(ps.size() * 2);
+    for (int i = 0; i < (int)ps.size(); i++) {
+        while (k > 1 && ccw(qs[k-1] - qs[k-2], ps[i] - qs[k-1]) <= 0) k--;
+        qs[k++] = ps[i];
+    }
+    for (int i = (int)ps.size()-2, t = k; i >= 0; i--) {
+        while (k > t && ccw(qs[k-1] - qs[k-2], ps[i] - qs[k-1]) <= 0) k--;
+        qs[k++] = ps[i];
+    }
+    qs.resize(k-1);
+    return qs;
+}
+    
+/*
 template<class T> struct Vec2d {
     T x, y;
     Vec2d() {};
@@ -223,6 +288,7 @@ template<class T> bool is_intersects(const Seg2d<T>& a, const Seg2d<T>& b) {
     else
         return is_both_sides(a, b) && is_both_sides(b, a);
 }
+ */
 
 ///////////////////////////////////////////////////////////////////
 // 3D vector

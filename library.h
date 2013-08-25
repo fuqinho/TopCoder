@@ -148,6 +148,33 @@ Mat operator*(const Mat& x, const Mat& y) {
                 r[i][j] += x[i][k] * y[k][j];
     return r;
 }
+// Ax = bを満たすxを返す (Vecのtypedefをdoubleにすること)
+Vec gauss_jordan(const Mat& A, const Vec& b) {
+    size_t n = A.size();
+    Mat B(n, Vec(n+1));
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++) B[i][j] = A[i][j];
+    for (size_t i = 0; i < n; i++) B[i][n] = b[i];
+    
+    for (size_t i = 0; i < n; i++) {
+        size_t pivot = i;
+        for (size_t j = i; j < n; j++) {
+            if (abs(B[j][i]) > abs(B[pivot][i])) pivot = j;
+        }
+        swap(B[i], B[pivot]);
+        
+        if (abs(B[i][i]) < 1E-10) return Vec();
+        
+        for (size_t j = i + 1; j <= n; j++) B[i][j] /= B[i][i];
+        for (size_t j = 0; j < n; j++) if (j != i) {
+            for (size_t k = i + 1; k <= n; k++) B[j][k] -= B[j][i] * B[i][k];
+        }
+    }
+    Vec res(n);
+    for (size_t i = 0; i < n; i++) res[i] = B[i][n];
+    return res;
+}
+
 
 //===============================================================//
 //                        Geometry

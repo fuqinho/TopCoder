@@ -293,16 +293,15 @@ template<class T> bool is_intersects(const Seg2d<T>& a, const Seg2d<T>& b) {
 ///////////////////////////////////////////////////////////////////
 // 3D vector
 struct vec3d {
-    int x, y, z;
+    double x, y, z;
     vec3d() {};
-    vec3d(int x, int y, int z): x(x), y(y), z(z) {}
+    vec3d(double x, double y, double z): x(x), y(y), z(z) {}
 };
-int dot(const vec3d& a, const vec3d& b) {
-    return a.x*b.x + a.y*b.y + a.z*b.z;
-}
-vec3d cross(const vec3d& a, const vec3d& b) {
-    return vec3d(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
-}
+vec3d operator+(const vec3d& a, const vec3d& b) {return vec3d(a.x+b.x, a.y+b.y, a.z+b.z);}
+vec3d operator-(const vec3d& a, const vec3d& b) {return vec3d(a.x-b.x, a.y-b.y, a.z-b.z);}
+double dot(const vec3d& a, const vec3d& b) {return a.x*b.x + a.y*b.y + a.z*b.z;}
+vec3d cross(const vec3d& a, const vec3d& b) {return vec3d(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);}
+double norm(const vec3d& a) {return sqrt(a.x*a.x + a.y*a.y + a.z*a.z);}
 
 //===============================================================//
 //                        Combinatrics

@@ -174,6 +174,53 @@ Vec gauss_jordan(const Mat& A, const Vec& b) {
     for (size_t i = 0; i < n; i++) res[i] = B[i][n];
     return res;
 }
+// A: Augmented matrix
+// 係数拡大行列から解空間の次元を求めた時のコード(SRM 590 Med)
+// この連立方程式はmod 2なのでxor使ってる。mod 素数のときはこの方法で解空間の次元が求まる。
+long long getSolutionDim(Mat& A) {
+    int R = A.size();
+    int C = A[0].size();
+    int row = 0, col = 0;
+    while (row < R && col < C-1) {
+        int pivot = row;
+        while (pivot < R && A[pivot][col] == 0) pivot++;
+        if (pivot != R) {
+            swap(A[row], A[pivot]);
+            for (int j = row + 1; j < R; j++) if (A[j][col] == 1) {
+                for (int k = 0; k < C; k++) A[j][k] ^= A[row][k];
+            }
+            row++;
+        }
+        col++;
+    }
+    for (int i = row; i < R; i++) if (A[i][C-1]) return -1;
+    return C- 1 - row;
+}
+// 拡大係数行列からrankを求めた時のメモ。合同式版。解がない時は-1を返す。
+int getRank(Mat& A, int modulo) {
+    int R = A.size();
+    int C = A[0].size();
+    int row = 0, col = 0;
+    while (row < R && col < C-1) {
+        int pivot = row;
+        while (pivot < R && A[pivot][col] == 0) pivot++;
+        if (pivot != R) {
+            swap(A[row], A[pivot]);
+            if (A[row][col] != 1) {
+                int inv = INV5[A[row][col]];
+                for (int j = col; j < C; j++) A[row][j] = (A[row][j] * inv) % modulo;
+            }
+            for (int j = row + 1; j < R; j++) if (A[j][col] != 0) {
+                for (int k = col + 1; k < C; k++) A[j][k] = (A[j][k] - A[row][k] * A[j][col] + 100 * modulo) % modulo;
+                A[j][col] = 0;
+            }
+            row++;
+        }
+        col++;
+    }
+    for (int i = row; i < R; i++) if (A[i][C-1]) return -1;
+    return row;
+}
 
 
 //===============================================================//

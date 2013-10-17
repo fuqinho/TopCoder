@@ -727,6 +727,22 @@ private:
     }
 };
 
+///////////////////////////////////////////////////////////////////
+// 頂点の次数がdeg[]で与えられるようなグラフが存在するならtrueを返す
+bool havel_hakimi(vector<int> deg) {
+    int N = (int)deg.size();
+    if (*max_element(deg.begin(), deg.end()) >= N) return false;
+    for (int k=0; k<N; k++) {
+        sort(deg.rbegin(), deg.rend());
+        for (int i=1; i<=deg[0]; i++) {
+            if (deg[i] <= 0) return false;
+            deg[i]--;
+        }
+        deg[0] = 0;
+    }
+    return true;
+}
+
 
 //===============================================================//
 //                        String

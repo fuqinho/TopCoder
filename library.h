@@ -148,7 +148,27 @@ Mat operator*(const Mat& x, const Mat& y) {
                 r[i][j] += x[i][k] * y[k][j];
     return r;
 }
-
+// 累乗
+Mat pow(const Mat& A, int p) {
+    if (p == 0) return E(A.size());
+    return (p & 1) ? A * pow(A, p-1) : pow(A*A, p/2);
+}
+// 累乗和
+// A^1 + A^2 + ... + A^k
+Mat lsum(const Mat& A, int k) {
+    if (k == 0) return Mat(A.size(), Vec(A[0].size(), 0));
+    if (k & 1) {
+        return A * lsum(A, k-1) + A;
+    } else {
+        Mat B = lsum(A, k / 2);
+        return B + (B * pow(A, k/2));
+    }
+}
+// ガウスの消去法
+// ランク
+// 逆行列
+// 行列式
+    
 //===============================================================//
 //                        Geometry
 //===============================================================//

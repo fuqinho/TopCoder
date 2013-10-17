@@ -165,16 +165,151 @@ Mat lsum(const Mat& A, int k) {
     }
 }
 // ガウスの消去法
-// ランク
-// 逆行列
-// 行列式
+// Ax = bを満たすxを返す (Vecのtypedefをdoubleにすること)
+Vec gauss_jordan(const Mat& A, const Vec& b) {
+    size_t n = A.size();
+    Mat B(n, Vec(n+1));
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++) B[i][j] = A[i][j];
+    for (size_t i = 0; i < n; i++) B[i][n] = b[i];
     
+    for (size_t i = 0; i < n; i++) {
+        size_t pivot = i;
+        for (size_t j = i; j < n; j++) {
+            if (abs(B[j][i]) > abs(B[pivot][i])) pivot = j;
+        }
+        swap(B[i], B[pivot]);
+        
+        if (abs(B[i][i]) < 1E-10) return Vec();
+        
+        for (size_t j = i + 1; j <= n; j++) B[i][j] /= B[i][i];
+        for (size_t j = 0; j < n; j++) if (j != i) {
+            for (size_t k = i + 1; k <= n; k++) B[j][k] -= B[j][i] * B[i][k];
+        }
+    }
+    Vec res(n);
+    for (size_t i = 0; i < n; i++) res[i] = B[i][n];
+    return res;
+}
+// A: Augmented matrix
+// 係数拡大行列から解空間の次元を求めた時のコード(SRM 590 Med)
+// この連立方程式はmod 2なのでxor使ってる。mod 素数のときはこの方法で解空間の次元が求まる。
+long long getSolutionDim(Mat& A) {
+    int R = A.size();
+    int C = A[0].size();
+    int row = 0, col = 0;
+    while (row < R && col < C-1) {
+        int pivot = row;
+        while (pivot < R && A[pivot][col] == 0) pivot++;
+        if (pivot != R) {
+            swap(A[row], A[pivot]);
+            for (int j = row + 1; j < R; j++) if (A[j][col] == 1) {
+                for (int k = 0; k < C; k++) A[j][k] ^= A[row][k];
+            }
+            row++;
+        }
+        col++;
+    }
+    for (int i = row; i < R; i++) if (A[i][C-1]) return -1;
+    return C- 1 - row;
+}
+// 拡大係数行列からrankを求めた時のメモ。合同式版。解がない時は-1を返す。
+int getRank(Mat& A, int modulo) {
+    int R = A.size();
+    int C = A[0].size();
+    int row = 0, col = 0;
+    while (row < R && col < C-1) {
+        int pivot = row;
+        while (pivot < R && A[pivot][col] == 0) pivot++;
+        if (pivot != R) {
+            swap(A[row], A[pivot]);
+            if (A[row][col] != 1) {
+                int inv = INV5[A[row][col]];
+                for (int j = col; j < C; j++) A[row][j] = (A[row][j] * inv) % modulo;
+            }
+            for (int j = row + 1; j < R; j++) if (A[j][col] != 0) {
+                for (int k = col + 1; k < C; k++) A[j][k] = (A[j][k] - A[row][k] * A[j][col] + 100 * modulo) % modulo;
+                A[j][col] = 0;
+            }
+            row++;
+        }
+        col++;
+    }
+    for (int i = row; i < R; i++) if (A[i][C-1]) return -1;
+    return row;
+}
+
 //===============================================================//
 //                        Geometry
 //===============================================================//
 
 ///////////////////////////////////////////////////////////////////
 // 2D vector
+struct Vec { double x, y; Vec() {}; Vec(double x, double y): x(x), y(y) {}};
+ostream& operator<<(ostream& o,const Vec& v) {o <<"(" << v.x << "," << v.y << ")"; return o;}
+// comparer
+bool operator==(const Vec& a, const Vec& b) {return a.x==b.x && a.y==b.y;}
+bool operator!=(const Vec& a, const Vec& b) {return !(a==b); }
+bool operator< (const Vec& a, const Vec& b) {return a.x<b.x || (!(b.x<a.x) && a.y<b.y);}
+bool operator<=(const Vec& a, const Vec& b) {return !(b<a);}
+bool operator> (const Vec& a, const Vec& b) {return b<a;}
+bool operator>=(const Vec& a, const Vec& b) {return !(a<b);}
+// basic operations
+Vec operator-(const Vec& a, const Vec& b) {return Vec(a.x-b.x,a.y-b.y);}
+Vec operator+(const Vec& a, const Vec& b) {return Vec(a.x+b.x,a.y+b.y);}
+Vec operator*(const Vec& a, double m) {return Vec(a.x*m, a.y*m);}
+Vec operator*(double m, const Vec& a) {return Vec(a.x*m, a.y*m);}
+double dot(const Vec& a, const Vec& b) {return a.x*b.x+a.y*b.y;}
+double cross(const Vec& a, const Vec& b) {return a.x*b.y-a.y*b.x;}
+double norm(const Vec& a) {return sqrt(a.x*a.x+a.y*a.y);}
+bool is_parallel(const Vec& a, const Vec& b) {return cross(a, b) == 0;}
+int ccw(const Vec& a, const Vec& b) {double cp=cross(a, b); return cp?(cp>0?1:-1):0;}
+
+// 2直線の交点
+Vec intersection(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
+    return p1 + (cross(q2-q1,q1-p1)/cross(q2-q1,p2-p1)) * (p2-p1);}
+// 点と直線の距離
+double distance(const Vec& p1, const Vec& p2, const Vec& q) {
+    return abs(cross(p2-p1,q-p1))/norm(p2-p1);}
+// 点qが線分p1p2上にあるかどうか
+bool on_seg(const Vec& p1, const Vec& p2, const Vec& q) {
+    return cross(p1-q,p2-q) == 0 && dot(p1-q,p2-q) <= 0;}
+// 線分の交差判定
+bool on_both_sides(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
+    return ccw(p2-p1,q1-p1) * ccw(p2-p1,p2-p1) <= 0;
+}
+bool has_intersection(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
+    if (is_parallel(p2-p1, q2-q1))
+        return on_seg(p1,p2,q1) || on_seg(p1,p2,q2) || on_seg(q1,q2,p1) || on_seg(q1,q2,p2);
+    else
+        return on_both_sides(p1,p2,q1,q2) && on_both_sides(q1,q2,p1,p2);
+}
+// pがpsにより作られる多角形の内側にあるか判定.psは左回りを想定.
+bool is_inside(const Vec& p, const vector<Vec>& ps) {
+    for (int i = 0; i < ps.size(); i++) {
+        Vec p_next = (i+1 < ps.size() ? ps[i+1] : ps[0]);
+        if (cross(p_next - ps[i], p - ps[i]) < 0) return false;
+    }
+    return true;
+}
+// 凸包
+vector<Vec> convex_hull(vector<Vec>& ps) {
+    sort(ps.begin(), ps.end());
+    int k = 0;
+    vector<Vec> qs(ps.size() * 2);
+    for (int i = 0; i < (int)ps.size(); i++) {
+        while (k > 1 && ccw(qs[k-1] - qs[k-2], ps[i] - qs[k-1]) <= 0) k--;
+        qs[k++] = ps[i];
+    }
+    for (int i = (int)ps.size()-2, t = k; i >= 0; i--) {
+        while (k > t && ccw(qs[k-1] - qs[k-2], ps[i] - qs[k-1]) <= 0) k--;
+        qs[k++] = ps[i];
+    }
+    qs.resize(k-1);
+    return qs;
+}
+    
+/*
 template<class T> struct Vec2d {
     T x, y;
     Vec2d() {};
@@ -243,20 +378,20 @@ template<class T> bool is_intersects(const Seg2d<T>& a, const Seg2d<T>& b) {
     else
         return is_both_sides(a, b) && is_both_sides(b, a);
 }
+ */
 
 ///////////////////////////////////////////////////////////////////
 // 3D vector
 struct vec3d {
-    int x, y, z;
+    double x, y, z;
     vec3d() {};
-    vec3d(int x, int y, int z): x(x), y(y), z(z) {}
+    vec3d(double x, double y, double z): x(x), y(y), z(z) {}
 };
-int dot(const vec3d& a, const vec3d& b) {
-    return a.x*b.x + a.y*b.y + a.z*b.z;
-}
-vec3d cross(const vec3d& a, const vec3d& b) {
-    return vec3d(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);
-}
+vec3d operator+(const vec3d& a, const vec3d& b) {return vec3d(a.x+b.x, a.y+b.y, a.z+b.z);}
+vec3d operator-(const vec3d& a, const vec3d& b) {return vec3d(a.x-b.x, a.y-b.y, a.z-b.z);}
+double dot(const vec3d& a, const vec3d& b) {return a.x*b.x + a.y*b.y + a.z*b.z;}
+vec3d cross(const vec3d& a, const vec3d& b) {return vec3d(a.y*b.z-a.z*b.y, a.z*b.x-a.x*b.z, a.x*b.y-a.y*b.x);}
+double norm(const vec3d& a) {return sqrt(a.x*a.x + a.y*a.y + a.z*a.z);}
 
 //===============================================================//
 //                        Combinatrics

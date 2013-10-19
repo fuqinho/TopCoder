@@ -547,6 +547,31 @@ private:
         return false;
     }
 };
+// 動的メモリ確保しない版
+const int BG_MAX_V = 100;
+int BG_V;
+int BG_G[BG_MAX_V][BG_MAX_V], BG_nE[BG_MAX_V];;
+int BG_match[BG_MAX_V];
+bool BG_used[BG_MAX_V];
+void BG_init(int n) { BG_V = n; memset(BG_G, 0, sizeof(BG_G)), memset(BG_nE, 0, sizeof(BG_nE)); }
+void BG_addEdge(int u, int v) { BG_G[u][BG_nE[u]++] = v, BG_G[v][BG_nE[v]++] = u; }
+bool BG_dfs(int v) {
+    BG_used[v] = true;
+    for (int i = 0; i < BG_nE[v]; i++) {
+        int u = BG_G[v][i], w = BG_match[u];
+        if (w < 0 || (!BG_used[w] && BG_dfs(w))) { BG_match[v] = u, BG_match[u] = v; return true; }
+    }
+    return false;
+}
+int BG_maxMatch() {
+    int res = 0;
+    memset(BG_match, -1, sizeof(BG_match));
+    for (int v = 0; v < BG_V; v++) if (BG_match[v] < 0) {
+        memset(BG_used, 0, sizeof(BG_used));
+        if (BG_dfs(v)) res++;
+    }
+    return res;
+}
 
 ///////////////////////////////////////////////////////////////////
 // 最大フロー

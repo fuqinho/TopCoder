@@ -67,11 +67,12 @@ map<int, int> factorize(int n) {
 
 ///////////////////////////////////////////////////////////////////
 //// 合同式の値用クラス
+//// 負の数を掛けないよう注意. 四則演算はセットで貼り付けないと危険.
 struct mint {
     static const int n = 1000000007;
     int v;
     mint() : v(0) {}
-    mint(int v) : v(v) {}
+    mint(int v) : v(v%n) {}
     mint& operator+= (const mint& o) {v = (v+o.v)%n; return *this;}
     mint& operator-= (const mint& o) {v = (v-o.v+n)%n; return *this;}
     mint& operator*= (const mint& o) {v = ((long long)v*o.v)%n; return *this;}

@@ -277,7 +277,7 @@ bool on_seg(const Vec& p1, const Vec& p2, const Vec& q) {
     return cross(p1-q,p2-q) == 0 && dot(p1-q,p2-q) <= 0;}
 // 線分の交差判定
 bool on_both_sides(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
-    return ccw(p2-p1,q1-p1) * ccw(p2-p1,p2-p1) <= 0;
+    return ccw(p2-p1,q1-p1) * ccw(p2-p1,q2-p1) <= 0;
 }
 bool has_intersection(const Vec& p1, const Vec& p2, const Vec& q1, const Vec& q2) {
     if (is_parallel(p2-p1, q2-q1))

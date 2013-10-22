@@ -150,13 +150,13 @@ Mat operator*(const Mat& x, const Mat& y) {
     return r;
 }
 // 累乗
-Mat pow(const Mat& A, int p) {
+Mat pow(const Mat& A, long long p) {
     if (p == 0) return E(A.size());
     return (p & 1) ? A * pow(A, p-1) : pow(A*A, p/2);
 }
 // 累乗和
 // A^1 + A^2 + ... + A^k
-Mat lsum(const Mat& A, int k) {
+Mat lsum(const Mat& A, long long k) {
     if (k == 0) return Mat(A.size(), Vec(A[0].size(), 0));
     if (k & 1) {
         return A * lsum(A, k-1) + A;

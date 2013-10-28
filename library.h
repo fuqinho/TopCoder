@@ -442,6 +442,39 @@ struct BIT {
 };
 
 ///////////////////////////////////////////////////////////////////
+// Segment Tree (implementing RMQ)
+template <typename T>
+class SegmentTree {
+public:
+    SegmentTree(int max_n, T initial = INF) {
+        size = 1;
+        while (size < max_n) size <<= 1;
+        data = vector<T>(size * 2, initial);
+    }
+    int query(int left, int right) {
+        return query(left, right, 0, 0, size);
+    }
+    void update(int index, int value) {
+        int k = index + size - 1;
+        data[k] = value;
+        while (k) {
+            k = (k - 1) / 2;
+            data[k] = min(data[k * 2 + 1], data[k * 2 + 2]);
+        }
+    }
+private:
+    static const int INF = 1000000000;
+    int size;
+    vector<T> data;
+    int query(int left, int right, int k, int l, int r) {
+        if (right <= l || r <= left) return INF; // no intersection
+        if (left <= l && r <= right) return data[k];
+        return min(query(left, right, k*2+1, l, (l+r)/2),
+                   query(left, right, k*2+2, (l+r)/2, r));
+    }
+};
+
+///////////////////////////////////////////////////////////////////
 // Meldable Heap
 //  (confirmed at http://utpc2012.contest.atcoder.jp/tasks/utpc2012_12)
 template<class T> class SkewHeap {
